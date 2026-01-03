@@ -29,7 +29,8 @@ import {
   Smartphone,
   ChevronUp,
   LogOut,
-  ShoppingBag
+  ShoppingBag,
+  Clock
 } from 'lucide-react';
 import { MOCK_PRODUCTS, CANTEENS } from './constants';
 import { Product, CartItem, Category, ViewState, Order, OrderStatus, User, Canteen, DeliveryMethod, Address } from './types';
@@ -166,11 +167,27 @@ export const App: React.FC = () => {
   
   // Search State
   const [searchQuery, setSearchQuery] = useState('');
+  
+  // First use popup state
+  const [showFirstUsePopup, setShowFirstUsePopup] = useState(false);
 
   // --- Refs ---
   const categoryRefs = useRef<{[key: string]: HTMLDivElement | null}>({});
   const rightScrollRef = useRef<HTMLDivElement>(null);
   const isScrollingRef = useRef(false);
+
+  // --- useEffect for first use popup ---
+  useEffect(() => {
+    // 检查用户是否是首次使用
+    const hasSeenFirstUsePopup = localStorage.getItem('hasSeenFirstUsePopup');
+    if (!hasSeenFirstUsePopup) {
+      // 延迟显示弹窗，让应用加载完成
+      const timer = setTimeout(() => {
+        setShowFirstUsePopup(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, []);
 
   // --- Helpers ---
   const addToCart = (product: Product, e?: React.MouseEvent) => {
@@ -879,6 +896,24 @@ export const App: React.FC = () => {
   const renderOrderDetailView = () => {
      if (!selectedOrder) return null;
      
+     // 计算预计时间：下单时间延后2-3小时
+     const calculateEstimatedTime = () => {
+       // 解析下单时间
+       const orderDate = new Date(selectedOrder.date.replace(/\//g, '-'));
+       // 生成2-3小时的随机延迟（毫秒）
+       const delayHours = 2 + Math.random(); // 2-3小时
+       const delayMs = delayHours * 60 * 60 * 1000;
+       // 计算预计时间
+       const estimatedDate = new Date(orderDate.getTime() + delayMs);
+       // 格式化时间
+       return estimatedDate.toLocaleTimeString('zh-CN', { 
+         hour: '2-digit', 
+         minute: '2-digit' 
+       });
+     };
+     
+     const estimatedTime = calculateEstimatedTime();
+     
      return (
        <div className="fixed inset-0 z-[100] bg-[#f3f4f6] flex flex-col animate-slide-in-right">
           <WeChatHeader title="订单详情" onBack={() => setSelectedOrder(null)} />
@@ -888,6 +923,17 @@ export const App: React.FC = () => {
              <div className="bg-white p-6 rounded-xl mb-4 text-center shadow-sm">
                 <div className="text-xl font-bold text-gray-900 mb-1">{selectedOrder.status}</div>
                 <div className="text-xs text-gray-500">感谢您使用 </div>
+                
+                {/* Estimated Time */}
+                <div className="mt-3 flex items-center justify-center gap-2 text-sm text-gray-600">
+                  <Clock size={16} className="text-blue-600" />
+                  <span>
+                    {selectedOrder.deliveryMethod === 'DELIVERY' ? 
+                      `预计配送时间：${estimatedTime}` : 
+                      `预计取餐时间：${estimatedTime}`
+                    }
+                  </span>
+                </div>
                 
                 <div className="flex justify-center gap-4 mt-6">
                    <button className="px-4 py-2 border border-gray-200 rounded-full text-xs font-medium text-gray-600">申请售后</button>
@@ -1062,7 +1108,12 @@ export const App: React.FC = () => {
   );
 
   const renderSearchView = () => {
-    const filtered = searchQuery ? MOCK_PRODUCTS.filter(p => p.name.includes(searchQuery) || p.tags?.some(t => t.includes(searchQuery))) : [];
+    // 优化搜索逻辑：支持模糊匹配，忽略大小写
+    const filtered = searchQuery ? MOCK_PRODUCTS.filter(p => 
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      p.description.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      p.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
+    ) : [];
     
     return (
       <div className="flex flex-col h-full bg-white z-[60]">
@@ -1073,7 +1124,7 @@ export const App: React.FC = () => {
                <input 
                  autoFocus 
                  className="bg-transparent flex-1 outline-none text-sm h-full" 
-                 placeholder="搜索商品名称"
+                 placeholder="搜索商品名称、描述或标签"
                  value={searchQuery}
                  onChange={e => setSearchQuery(e.target.value)}
                />
@@ -1089,20 +1140,48 @@ export const App: React.FC = () => {
                <div className="text-gray-400 text-sm mt-10 text-center">未找到相关商品</div>
             ) : (
                <div className="grid grid-cols-2 gap-3">
-                  {filtered.map(product => (
-                     <div key={product.id} className="bg-white border border-gray-100 rounded-lg overflow-hidden flex flex-col shadow-sm" onClick={() => setSelectedProduct(product)}>
-                        <div className="h-32 bg-gray-200">
-                           <img src={product.image} className="w-full h-full object-cover"/>
+                  {filtered.map(product => {
+                    const qty = getCartQuantity(product.id);
+                    return (
+                      <div key={product.id} className="bg-white border border-gray-100 rounded-lg overflow-hidden flex flex-col shadow-sm active:scale-95 transition-transform" onClick={() => setSelectedProduct(product)}>
+                        <div className="h-32 bg-gray-200 relative">
+                           <img src={product.image} className="w-full h-full object-cover" loading="lazy"/>
+                           {product.stock < 10 && (
+                             <div className="absolute bottom-0 w-full bg-black/60 text-white text-[10px] text-center py-0.5">仅剩{product.stock}份</div>
+                           )}
                         </div>
                         <div className="p-2 flex flex-col flex-1">
-                           <div className="font-bold text-sm text-gray-800 line-clamp-1">{product.name}</div>
+                           <div className="font-bold text-sm text-gray-800 line-clamp-2">{product.name}</div>
+                           <div className="text-xs text-gray-500 line-clamp-1 mt-1">{product.description}</div>
+                           {product.tags && product.tags.length > 0 && (
+                             <div className="flex flex-wrap gap-1 mt-1">
+                               {product.tags.slice(0, 2).map(tag => (
+                                 <span key={tag} className="text-[10px] bg-gray-100 text-gray-600 px-1 rounded">{tag}</span>
+                               ))}
+                             </div>
+                           )}
                            <div className="mt-auto flex justify-between items-center pt-2">
                               <span className="text-red-500 font-bold text-sm">¥{product.price}</span>
-                              <button onClick={(e) => addToCart(product, e)} className="w-6 h-6 bg-blue-600 rounded-full text-white flex items-center justify-center"><Plus size={14}/></button>
+                              {qty > 0 ? (
+                                <div className="flex items-center gap-1">
+                                  <button onClick={(e) => removeFromCart(product.id, e)} className="w-5 h-5 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 bg-white">
+                                    <Minus size={12} />
+                                  </button>
+                                  <span className="text-xs font-medium w-4 text-center">{qty}</span>
+                                  <button onClick={(e) => addToCart(product, e)} className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                                    <Plus size={12} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button onClick={(e) => addToCart(product, e)} className="w-5 h-5 bg-blue-600 rounded-full text-white flex items-center justify-center">
+                                  <Plus size={12} />
+                                </button>
+                              )}
                            </div>
                         </div>
-                     </div>
-                  ))}
+                      </div>
+                    );
+                  })}
                </div>
             )}
          </div>
@@ -1128,10 +1207,55 @@ export const App: React.FC = () => {
     </div>
   );
 
+  // 首次使用弹窗渲染函数
+  const renderFirstUsePopup = () => (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
+       <div className="bg-white w-[85%] max-w-sm rounded-2xl overflow-hidden shadow-2xl animate-scale-in">
+          <div className="p-6 flex flex-col">
+             <div className="text-center mb-4">
+                <div className="inline-block p-3 bg-blue-100 rounded-full mb-3">
+                   <Clock size={24} className="text-blue-600" />
+                </div>
+                <h3 className="font-bold text-xl text-gray-900 mb-2">温馨提示</h3>
+             </div>
+             <div className="text-sm text-gray-600 mb-6 leading-relaxed">
+                <p className="mb-3">感谢您使用我们的点餐APP！</p>
+                <p className="font-medium">为了确保您能及时享用美食，请提前 <span className="text-red-500 font-bold">2-3小时</span> 预下单。</p>
+                <p className="mt-3 text-xs text-gray-500">我们将根据您的下单时间安排制作和配送，确保您在期望的时间享用美味餐食。</p>
+             </div>
+             <Button 
+               fullWidth 
+               onClick={() => {
+                 setShowFirstUsePopup(false);
+                 localStorage.setItem('hasSeenFirstUsePopup', 'true');
+               }} 
+               className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 shadow-lg shadow-blue-200"
+             >
+               我知道了
+             </Button>
+          </div>
+       </div>
+    </div>
+  );
+
   const renderCheckoutView = () => {
     // Determine address logic
     const defaultAddress = addresses.find(a => a.isDefault) || addresses[0];
     const hasAddress = addresses.length > 0;
+    
+    // 计算预计时间
+    const now = new Date();
+    const getEstimatedTime = () => {
+      if (deliveryMethod === 'DELIVERY') {
+        // 外卖配送：预计30-45分钟送达
+        const deliveryTime = new Date(now.getTime() + Math.floor(Math.random() * 15 + 30) * 60 * 1000);
+        return `预计${deliveryTime.getHours().toString().padStart(2, '0')}:${deliveryTime.getMinutes().toString().padStart(2, '0')}送达`;
+      } else {
+        // 到店自提：预计15-25分钟出餐
+        const pickupTime = new Date(now.getTime() + Math.floor(Math.random() * 10 + 15) * 60 * 1000);
+        return `预计${pickupTime.getHours().toString().padStart(2, '0')}:${pickupTime.getMinutes().toString().padStart(2, '0')}出餐`;
+      }
+    };
     
     return (
        <div className="fixed inset-0 z-[100] bg-[#f7f8fa] flex flex-col animate-slide-in-right">
@@ -1152,6 +1276,12 @@ export const App: React.FC = () => {
                 >
                   到店自提
                 </button>
+             </div>
+
+             {/* Estimated Time */}
+             <div className="bg-blue-50 rounded-lg p-3 mb-4 flex items-center gap-2">
+               <Clock size={16} className="text-blue-600" />
+               <span className="text-sm text-blue-800 font-medium">{getEstimatedTime()}</span>
              </div>
 
              {/* Location/Address Card */}
@@ -1281,6 +1411,12 @@ export const App: React.FC = () => {
 
       {selectedProduct && renderProductDetailsView()}
       {selectedOrder && renderOrderDetailView()}
+      
+      {/* First use popup */}
+      {showFirstUsePopup && renderFirstUsePopup()}
+      
+      {/* Global Floating Cart Bar - Always show when not in checkout view */}
+      {!isCheckoutView && renderFloatingCartBar({ mode: 'HOME' })}
       
       {/* Bottom Nav Conditions */}
       {['HOME', 'ORDERS', 'PROFILE'].includes(view) && 
