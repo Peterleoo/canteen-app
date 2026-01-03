@@ -1,0 +1,5 @@
+{
+  "name": "Canteen APP",
+  "description": "A mobile-first canteen ordering application featuring menu browsing, cart management, and mock WeChat payment.",
+  "requestFramePermissions": []
+}

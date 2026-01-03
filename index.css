@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 全局锁定，模拟原生 App 体验 */
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* 允许文本输入的区域可选择 */
+input, textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+[hidden] { display: none !important; }
+
+/* 加载状态 */
+#root:empty::before {
+  content: 'Loading...';
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: #9ca3af;
+  font-size: 14px;
+}
