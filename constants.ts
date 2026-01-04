@@ -143,5 +143,89 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 20,
     sales: 120,
     tags: ['生鲜', '特价']
+  },
+  // 添加套餐数据
+  {
+    id: '11',
+    name: '经典午餐套餐',
+    description: '包含主食+小吃+饮品，营养均衡，性价比高。',
+    price: 22.00,
+    category: Category.COMBOS,
+    image: getPlaceholder('午餐套餐', '#4682B4'), // Steel Blue
+    stock: 50,
+    sales: 1800,
+    tags: ['热销', '划算'],
+    comboItems: [
+      { id: 'c11-1', name: '红烧牛肉面', quantity: '1份', price: 14.00 },
+      { id: 'c11-2', name: '脆皮春卷', quantity: '2个', price: 3.00 },
+      { id: 'c11-3', name: '港式冻柠茶', quantity: '1杯', price: 4.00 }
+    ]
+  },
+  {
+    id: '12',
+    name: '豪华晚餐套餐',
+    description: '包含主菜+汤+小吃+饮品，丰盛美味。',
+    price: 35.00,
+    category: Category.COMBOS,
+    image: getPlaceholder('晚餐套餐', '#8B4513'), // Saddle Brown
+    stock: 30,
+    sales: 1200,
+    tags: ['豪华', '美味'],
+    comboItems: [
+      { id: 'c12-1', name: '川味宫保鸡丁', quantity: '1份', price: 12.50 },
+      { id: 'c12-2', name: '番茄蛋汤', quantity: '1份', price: 5.00 },
+      { id: 'c12-3', name: '香酥炸鸡翅', quantity: '2个', price: 5.00 },
+      { id: 'c12-4', name: '珍珠奶茶', quantity: '1杯', price: 6.00 }
+    ]
+  },
+  {
+    id: '13',
+    name: '素食主义套餐',
+    description: '全素食套餐，营养丰富，健康美味。',
+    price: 18.00,
+    category: Category.COMBOS,
+    image: getPlaceholder('素食套餐', '#32CD32'), // Lime Green
+    stock: 40,
+    sales: 900,
+    tags: ['素食', '健康'],
+    comboItems: [
+      { id: 'c13-1', name: '清炒时蔬', quantity: '1份', price: 9.00 },
+      { id: 'c13-2', name: '蔬菜沙拉', quantity: '1份', price: 6.00 },
+      { id: 'c13-3', name: '豆浆', quantity: '1杯', price: 2.00 }
+    ]
+  },
+  {
+    id: '14',
+    name: '儿童营养套餐',
+    description: '专为儿童设计，营养均衡，口感清淡。',
+    price: 15.00,
+    category: Category.COMBOS,
+    image: getPlaceholder('儿童套餐', '#FF69B4'), // Hot Pink
+    stock: 60,
+    sales: 1500,
+    tags: ['儿童', '营养'],
+    comboItems: [
+      { id: 'c14-1', name: '蒸蛋羹', quantity: '1份', price: 5.00 },
+      { id: 'c14-2', name: '白米饭', quantity: '1份', price: 2.00 },
+      { id: 'c14-3', name: '清炒西兰花', quantity: '1份', price: 6.00 },
+      { id: 'c14-4', name: '苹果汁', quantity: '1杯', price: 4.00 }
+    ]
+  },
+  {
+    id: '15',
+    name: '情侣双人套餐',
+    description: '包含两份主菜+两份饮品+一份小吃，适合情侣分享。',
+    price: 58.00,
+    category: Category.COMBOS,
+    image: getPlaceholder('情侣套餐', '#FF1493'), // Deep Pink
+    stock: 25,
+    sales: 800,
+    tags: ['情侣', '浪漫'],
+    comboItems: [
+      { id: 'c15-1', name: '红烧牛肉面', quantity: '1份', price: 14.00 },
+      { id: 'c15-2', name: '秘制卤肉饭', quantity: '1份', price: 15.00 },
+      { id: 'c15-3', name: '香酥炸鸡翅', quantity: '4个', price: 12.00 },
+      { id: 'c15-4', name: '珍珠奶茶', quantity: '2杯', price: 12.00 }
+    ]
   }
 ];

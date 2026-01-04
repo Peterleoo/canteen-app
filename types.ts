@@ -4,6 +4,14 @@ export enum Category {
   MAINS = '主食',
   SNACKS = '小吃',
   DRINKS = '饮品',
+  COMBOS = '套餐',
+}
+
+export interface ComboItem {
+  id: string;
+  name: string;
+  quantity: string;
+  price: number;
 }
 
 export interface Product {
@@ -16,6 +24,7 @@ export interface Product {
   stock: number;
   sales: number;
   tags?: string[];
+  comboItems?: ComboItem[];
 }
 
 export interface CartItem extends Product {

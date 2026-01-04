@@ -673,6 +673,74 @@ export const App: React.FC = () => {
                </div>
             </div>
 
+            {/* Popular Products Section - Same style as categories */}
+            <div className="mb-4">
+              <div className="sticky top-0 bg-white/95 backdrop-blur-sm px-4 py-2 z-10 text-xs font-bold text-gray-500 flex items-center gap-2">
+                <div className="w-1 h-3 bg-blue-600 rounded-full"></div>
+                人气热销
+              </div>
+              <div>
+                {/* Sort products by sales in descending order and take top 8 */}
+                {[...MOCK_PRODUCTS].sort((a, b) => b.sales - a.sales).slice(0, 8).map(product => {
+                  const qty = getCartQuantity(product.id);
+                  return (
+                    <div 
+                      key={product.id} 
+                      className="flex p-4 gap-3 relative active:bg-gray-50 transition-colors"
+                      onClick={() => setSelectedProduct(product)}
+                    >
+                      <div className="w-24 h-24 shrink-0 rounded-lg overflow-hidden bg-gray-100 relative border border-gray-100">
+                         <img src={product.image} className="w-full h-full object-cover" loading="lazy" />
+                         {product.stock < 10 && (
+                           <div className="absolute bottom-0 w-full bg-black/60 text-white text-[10px] text-center py-0.5">仅剩{product.stock}份</div>
+                         )}
+                      </div>
+                       
+                      <div className="flex-1 flex flex-col justify-between py-0.5">
+                         <div>
+                            <h3 className="font-bold text-gray-900 text-sm mb-1">{product.name}</h3>
+                            <p className="text-xs text-gray-500 line-clamp-1 mb-1">{product.description}</p>
+                            <div className="flex flex-wrap gap-1">
+                              {product.tags?.map(tag => (
+                                <span key={tag} className="text-[10px] bg-blue-50 text-blue-600 px-1 rounded border border-blue-100">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                            <div className="text-[10px] text-gray-400 mt-1">月售 {formatSales(product.sales)}</div>
+                         </div>
+                         
+                         <div className="flex justify-between items-end">
+                            <div className="text-red-500 font-bold text-lg flex items-baseline font-mono">
+                              <span className="text-xs mr-0.5">¥</span>{product.price}
+                            </div>
+                            
+                            {qty > 0 ? (
+                              <div className="flex items-center gap-3">
+                                <button onClick={(e) => removeFromCart(product.id, e)} className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 bg-white active:bg-gray-100">
+                                  <Minus size={14} />
+                                </button>
+                                <span className="text-sm font-medium w-4 text-center">{qty}</span>
+                                <button onClick={(e) => addToCart(product.id, e)} className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white active:scale-95 shadow-sm">
+                                  <Plus size={14} />
+                                </button>
+                              </div>
+                            ) : (
+                              <button 
+                                onClick={(e) => addToCart(product.id, e)}
+                                className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white active:scale-95 shadow-sm"
+                              >
+                                <Plus size={14} />
+                              </button>
+                            )}
+                         </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             {/* Categories */}
             {groupedProducts.map(group => (
               <div key={group.category} id={group.category} ref={(el) => { categoryRefs.current[group.category] = el; }} className="mb-4">
@@ -852,7 +920,43 @@ export const App: React.FC = () => {
              </div>
              
              <p className="text-gray-600 leading-relaxed mb-8">{selectedProduct.description}</p>
-             
+              
+             {/* Combo Items Section - Only show if product has comboItems */}
+             {selectedProduct.comboItems && selectedProduct.comboItems.length > 0 && (
+               <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                  <h3 className="font-bold text-sm mb-3">套餐内容</h3>
+                  <div className="space-y-2">
+                     {selectedProduct.comboItems.map(item => (
+                       <div key={item.id} className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                             <span className="text-sm text-gray-900">{item.name}</span>
+                             <span className="text-xs text-gray-500">{item.quantity}</span>
+                          </div>
+                          <div className="text-red-500 font-bold text-sm font-mono">¥{item.price.toFixed(2)}</div>
+                       </div>
+                     ))}
+                  </div>
+               </div>
+             )}
+              
+             {/* Product Details Section */}
+             <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                <h3 className="font-bold text-sm mb-3">商品详情</h3>
+                <div className="space-y-3 text-sm text-gray-600">
+                   <p>商品详情内容示例，可根据需要添加图文介绍。</p>
+                   <p>这里可以展示商品的详细信息，包括：</p>
+                   <ul className="list-disc list-inside space-y-1 pl-2">
+                      <li>商品的原料和制作工艺</li>
+                      <li>商品的特色和优势</li>
+                      <li>商品的食用方法和注意事项</li>
+                      <li>其他相关信息</li>
+                   </ul>
+                   <div className="h-32 bg-gray-200 rounded-lg mt-3 flex items-center justify-center text-gray-400">
+                      商品图片示例
+                   </div>
+                </div>
+             </div>
+              
              <div className="bg-gray-50 rounded-xl p-4 mb-6">
                 <h3 className="font-bold text-sm mb-3">营养成分 (参考)</h3>
                 <div className="grid grid-cols-4 gap-2 text-center">
@@ -1133,7 +1237,7 @@ export const App: React.FC = () => {
             <button className="px-2 text-sm text-blue-600 font-medium" onClick={() => {}}>搜索</button>
          </div>
          
-         <div className="flex-1 overflow-y-auto p-4">
+         <div className="flex-1 overflow-y-auto p-4 pb-40">
             {!searchQuery ? (
                <div className="text-gray-400 text-sm mt-10 text-center">请输入关键词搜索</div>
             ) : filtered.length === 0 ? (
