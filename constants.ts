@@ -1,7 +1,7 @@
 import { Category, Product, Canteen } from './types';
 
 export const CANTEENS: Canteen[] = [
-  { id: '1', name: '万科滨河道 (当前定位)', distance: '0m', address: '滨河道1号' },
+  { id: '1', name: '万科滨河道店 (当前定位)', distance: '0m', address: '滨河道1号' },
   { id: '2', name: '一食堂 (A区)', distance: '150m', address: '教学楼A区东侧' },
   { id: '3', name: '二食堂 (B区)', distance: '800m', address: '宿舍楼B区南侧' },
   { id: '4', name: '教工餐厅', distance: '1.2km', address: '行政楼顶层' },

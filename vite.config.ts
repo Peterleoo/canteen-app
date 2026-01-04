@@ -12,7 +12,8 @@ export default defineConfig(({ mode }) => {
       outDir: 'dist',
     },
     server: {
-      port: 3000
+      port: 3001,
+      host: true
     }
   };
 });
