@@ -716,23 +716,23 @@ export const App: React.FC = () => {
                             </div>
                             
                             {qty > 0 ? (
-                              <div className="flex items-center gap-3">
-                                <button onClick={(e) => removeFromCart(product.id, e)} className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 bg-white active:bg-gray-100">
-                                  <Minus size={14} />
-                                </button>
-                                <span className="text-sm font-medium w-4 text-center">{qty}</span>
-                                <button onClick={(e) => addToCart(product.id, e)} className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white active:scale-95 shadow-sm">
+                                <div className="flex items-center gap-3">
+                                  <button onClick={(e) => removeFromCart(product.id, e)} className="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-600 bg-white active:bg-gray-100">
+                                    <Minus size={14} />
+                                  </button>
+                                  <span className="text-sm font-medium w-4 text-center">{qty}</span>
+                                  <button onClick={(e) => addToCart(product, e)} className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white active:scale-95 shadow-sm">
+                                    <Plus size={14} />
+                                  </button>
+                                </div>
+                              ) : (
+                                <button 
+                                  onClick={(e) => addToCart(product, e)}
+                                  className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white active:scale-95 shadow-sm"
+                                >
                                   <Plus size={14} />
                                 </button>
-                              </div>
-                            ) : (
-                              <button 
-                                onClick={(e) => addToCart(product.id, e)}
-                                className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white active:scale-95 shadow-sm"
-                              >
-                                <Plus size={14} />
-                              </button>
-                            )}
+                              )}
                          </div>
                       </div>
                     </div>
