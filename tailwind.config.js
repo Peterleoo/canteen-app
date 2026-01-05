@@ -12,7 +12,22 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#2563eb',
+        primary: {
+          DEFAULT: '#0052D9', // Tech Blue
+          50: '#F2F6FC',
+          100: '#E5ECF9',
+          600: '#0052D9',
+          700: '#003CAB',
+        },
+        secondary: {
+          DEFAULT: '#FF6B00', // Warm Orange
+        },
+        dark: '#1C1C1E',
+      },
+      boxShadow: {
+        'card': '0 4px 12px rgba(0, 0, 0, 0.05)',
+        'float': '0 8px 16px rgba(0, 50, 150, 0.08)',
+        'glow': '0 4px 12px rgba(0, 82, 217, 0.25)',
       },
       keyframes: {
         'slide-in': {
@@ -26,12 +41,17 @@ export default {
         'fade-in': {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' }
+        },
+        'scale-in': {
+          '0%': { transform: 'scale(0.95)', opacity: '0' },
+          '100%': { transform: 'scale(1)', opacity: '1' }
         }
       },
       animation: {
-        'slide-in': 'slide-in 0.3s ease-out forwards',
-        'slide-in-bottom': 'slide-in-bottom 0.3s ease-out forwards',
-        'fade-in': 'fade-in 0.2s ease-out forwards'
+        'slide-in': 'slide-in 0.3s cubic-bezier(0.2, 0.0, 0.2, 1) forwards',
+        'slide-in-bottom': 'slide-in-bottom 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'fade-in': 'fade-in 0.2s ease-out forwards',
+        'scale-in': 'scale-in 0.2s cubic-bezier(0.2, 0.0, 0.2, 1) forwards'
       }
     },
   },

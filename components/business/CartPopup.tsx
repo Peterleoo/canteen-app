@@ -11,7 +11,7 @@ export const CartPopup: React.FC<CartPopupProps> = ({ onClose }) => {
     const { cart, clearCart, updateQuantity } = useCartStore();
 
     return (
-        <div className="fixed inset-0 z-[110] flex flex-col justify-end">
+        <div className="fixed inset-0 z-[150] flex flex-col justify-end">
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

@@ -44,8 +44,7 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
 // Auth Guard Component
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, setShowLoginModal } = useUserStore();
-  const location = useLocation();
+  const { user } = useUserStore();
 
   if (!user) {
     // Redirect to home and show login modal
