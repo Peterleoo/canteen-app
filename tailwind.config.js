@@ -5,6 +5,7 @@ export default {
     "./App.{js,ts,jsx,tsx}",
     "./index.{js,ts,jsx,tsx}",
     "./components/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
     "./services/**/*.{js,ts,jsx,tsx}",
     "./*.{js,ts,jsx,tsx}",
   ],
@@ -35,7 +36,7 @@ export default {
     },
   },
   plugins: [
-    function({ addUtilities }) {
+    function ({ addUtilities }) {
       const newUtilities = {
         '.pb-safe': {
           'padding-bottom': 'env(safe-area-inset-bottom)',

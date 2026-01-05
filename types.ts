@@ -78,4 +78,4 @@ export interface Canteen {
   address: string;
 }
 
-export type ViewState = 'HOME' | 'CART' | 'ORDERS' | 'PROFILE' | 'ADDRESS_LIST' | 'ADDRESS_EDIT' | 'PICKUP_EDIT';
+// ViewState replaced by React Router
