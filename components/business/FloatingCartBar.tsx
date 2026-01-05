@@ -10,6 +10,7 @@ interface FloatingCartBarProps {
     selectedProduct: Product | null;
     onCheckout: () => void;
     deliveryFee: number;
+    hasBottomNav?: boolean;
 }
 
 export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
@@ -18,7 +19,8 @@ export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
     onToggleCart,
     selectedProduct,
     onCheckout,
-    deliveryFee
+    deliveryFee,
+    hasBottomNav = false
 }) => {
     const { cart, addToCart, getCartQuantity, getCartTotal, getCartCount } = useCartStore();
 
@@ -31,10 +33,15 @@ export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
 
     return (
         <div
-            className={`fixed bottom-0 left-0 right-0 z-[160] transition-all duration-300 ${isExpanded
-                ? 'bg-white border-t border-gray-100 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.08)]'
-                : 'bottom-[60px] px-4 pointer-events-none'
+            className={`fixed left-0 right-0 z-[160] transition-all duration-300 ${isExpanded
+                ? 'bottom-0 bg-white border-t border-gray-100 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.08)]'
+                : 'px-4 pointer-events-none'
                 }`}
+            style={!isExpanded ? {
+                bottom: hasBottomNav
+                    ? 'calc(65px + env(safe-area-inset-bottom))'
+                    : '20px'
+            } : {}}
         >
             <div
                 className={`flex items-center justify-between transition-all duration-300 pointer-events-auto ${isExpanded
