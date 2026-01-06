@@ -2,19 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 视口重构 (终极战神版)：强制锁定物理视口，解决 iOS PWA 各种布局与高度玄学 */
+/* 视口基础重塑：采用标准的 100% + overflow: hidden 方案，避免拦截触摸 */
 html,
 body {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   height: 100%;
   height: -webkit-fill-available;
   width: 100%;
   overflow: hidden;
-  /* 禁止整站弹性溢出 */
+  /* 防止橡皮筋滚动 */
   background-color: #F5F6F8;
   margin: 0;
   padding: 0;
@@ -33,6 +28,7 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  /* 强制所有内容在根容器内管理 */
 }
 
 /* Flex 子项高度延伸补丁 (iOS Webkit 专用) */
@@ -101,11 +97,13 @@ textarea {
   scrollbar-width: none;
 }
 
-/* IOS Scroll and Height Specific Fixes */
+/* Smooth Scrolling */
 .smooth-scroll {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  /* Force inertia scrolling on iOS */
+  position: relative;
+  /* 核心：确保 iOS 触摸事件能精准落到滚动容器上 */
+  z-index: 1;
 }
 
 /* On iOS, smooth scroll sometimes locks the UI, use auto as backup if jittery */

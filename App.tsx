@@ -127,7 +127,7 @@ export const App: React.FC = () => {
   const showFloatingCart = ['/', '/search'].includes(location.pathname) || selectedProduct !== null;
 
   return (
-    <div className="w-full h-full max-w-md mx-auto bg-[#F5F6F8] relative shadow-2xl overflow-hidden text-gray-800 flex flex-col flex-1 min-h-0">
+    <div className="w-full h-full min-h-screen max-w-md mx-auto bg-[#F5F6F8] relative shadow-2xl overflow-hidden text-gray-800 flex flex-col">
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={
