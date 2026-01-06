@@ -109,7 +109,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
     };
 
     return (
-        <div className="flex flex-col h-full bg-[#F5F6F8] relative">
+        <div className="flex flex-col h-full bg-[#F5F6F8] relative flex-1 min-h-0">
             <WeChatHeader className="bg-white/80 backdrop-blur-md" />
 
             <div className="bg-white/80 backdrop-blur-md px-4 pb-3 flex gap-3 items-center shadow-sm z-30 shrink-0 sticky top-0">
