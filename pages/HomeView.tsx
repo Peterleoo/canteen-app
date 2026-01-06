@@ -239,8 +239,11 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                             <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm">今日限购</span>
                                         </div>
                                     </div>
-                                    <div className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 snap-x scroll-pl-4">
-                                        <div className="w-1 shrink-0" /> {/* 4px w-1 + 12px gap-3 = 16px (matches p-4) */}
+                                    <div
+                                        className="flex gap-3 overflow-x-auto no-scrollbar pb-4 snap-x scroll-pl-4 smooth-scroll"
+                                        style={{ touchAction: 'pan-x', WebkitOverflowScrolling: 'touch' }}
+                                    >
+                                        <div className="w-1 shrink-0" />
                                         {MOCK_PRODUCTS.slice(0, 5).map(product => {
                                             const soldPercent = Math.floor((product.sales / (product.sales + product.stock)) * 100);
                                             return (
