@@ -104,6 +104,8 @@ textarea {
   position: relative;
   /* 核心：确保 iOS 触摸事件能精准落到滚动容器上 */
   z-index: 1;
+  overscroll-behavior-y: contain;
+  /* 防止滚动链过载 */
 }
 
 /* On iOS, smooth scroll sometimes locks the UI, use auto as backup if jittery */
