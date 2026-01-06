@@ -2,14 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 优化视口锁定与高度继承 */
+/* 视口锁定重构：使用绝对定位强制填充物理屏幕 */
 html,
 body,
 #root {
-  height: 100%;
-  height: -webkit-fill-available;
-  height: 100vh;
-  /* Revert to standard vh for better bottom alignment */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
   overflow: hidden;
   background-color: #F5F6F8;
