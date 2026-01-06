@@ -10,7 +10,7 @@ interface SearchViewProps {
     onProductClick: (product: Product) => void;
 }
 
-const HOT_SEARCHES = ['人气热销', '暖心午餐', '招牌套餐', '轻食沙拉', '广式点心'];
+const HOT_SEARCHES = ['招牌猪肉煎饺', '粤式腊味饭', '浓汤牛肉面', '香煎鸡胸肉', '蒸饺拼盘'];
 
 export const SearchView: React.FC<SearchViewProps> = ({
     onBack,
@@ -89,8 +89,8 @@ export const SearchView: React.FC<SearchViewProps> = ({
                                 backgroundColor: isFocused ? '#fff' : 'rgba(243, 244, 246, 0.8)'
                             }}
                             className={`flex items-center gap-2 h-11 px-4 rounded-2xl transition-all duration-500 ${isFocused
-                                    ? 'shadow-[0_0_20px_rgba(59,130,246,0.15),0_4px_12px_rgba(0,0,0,0.05)] border border-blue-500/20'
-                                    : 'bg-gray-100/80 border border-transparent'
+                                ? 'shadow-[0_0_20px_rgba(59,130,246,0.15),0_4px_12px_rgba(0,0,0,0.05)] border border-blue-500/20'
+                                : 'bg-gray-100/80 border border-transparent'
                                 }`}
                         >
                             <Search size={18} className={`transition-colors duration-500 ${isFocused ? 'text-blue-500' : 'text-gray-400'}`} />

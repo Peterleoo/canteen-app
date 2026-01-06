@@ -114,14 +114,14 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
             <div className="bg-white/80 backdrop-blur-md px-4 pb-3 flex gap-3 items-center shadow-sm z-30 shrink-0 sticky top-0">
                 <div
-                    className="flex items-center gap-1.5 max-w-[40%] cursor-pointer active:opacity-60 transition-opacity"
+                    className="flex items-center gap-1.5 max-w-[180px] cursor-pointer active:opacity-60 transition-opacity shrink-0"
                     onClick={onShowLocation}
                 >
-                    <div className="w-8 h-8 rounded-full bg-[#F2F6FC] flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-[#F2F6FC] flex items-center justify-center shrink-0">
                         <MapPin size={16} className="text-[#0052D9]" />
                     </div>
-                    <span className="text-[15px] font-bold text-gray-900 truncate">{selectedCanteen.name}</span>
-                    <ChevronDown size={14} className="text-gray-400" />
+                    <span className="text-[14px] font-bold text-gray-900 truncate">{selectedCanteen.name}</span>
+                    <ChevronDown size={14} className="text-gray-400 shrink-0" />
                 </div>
 
                 <div
