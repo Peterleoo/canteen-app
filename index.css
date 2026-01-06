@@ -2,14 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 视口基础重构：移除 position: fixed 锁定，防止拦截 iOS 触摸事件 */
+/* 视口重构 (终极战神版)：强制锁定物理视口，解决 iOS PWA 各种布局与高度玄学 */
 html,
 body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 100%;
   height: -webkit-fill-available;
   width: 100%;
   overflow: hidden;
-  /* 核心锁定，防止整站橡皮筋 */
+  /* 禁止整站弹性溢出 */
   background-color: #F5F6F8;
   margin: 0;
   padding: 0;
@@ -28,7 +33,6 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* 确保子层级可以独立滚动 */
 }
 
 /* Flex 子项高度延伸补丁 (iOS Webkit 专用) */
