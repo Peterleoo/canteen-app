@@ -123,11 +123,11 @@ export const App: React.FC = () => {
   };
 
   // Logic to show/hide bottom nav and floating cart
-  const showBottomNav = ['/', '/orders', '/profile'].includes(location.pathname);
+  const showBottomNav = ['/', '/orders', '/profile'].includes(location.pathname) && !selectedProduct;
   const showFloatingCart = ['/', '/search'].includes(location.pathname) || selectedProduct !== null;
 
   return (
-    <div className="w-full h-[100dvh] max-w-md mx-auto bg-[#f3f4f6] relative shadow-2xl overflow-hidden text-gray-800">
+    <div className="w-full h-full min-h-[-webkit-fill-available] max-w-md mx-auto bg-[#F5F6F8] relative shadow-2xl overflow-hidden text-gray-800 flex flex-col">
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={

@@ -40,7 +40,7 @@ export const CartPopup: React.FC<CartPopupProps> = ({ onClose }) => {
                     </button>
                 </div>
 
-                <div className="overflow-y-auto p-4 space-y-5 pb-[90px]">
+                <div className="overflow-y-auto p-4 space-y-5 pb-[100px]">
                     {cart.length === 0 ? (
                         <div className="text-center py-8 text-gray-400 text-sm">购物车是空的</div>
                     ) : (

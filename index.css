@@ -5,7 +5,8 @@
 /* 全局锁定，模拟原生 App 体验 */
 html,
 body {
-  height: 100dvh;
+  height: 100%;
+  height: -webkit-fill-available;
   width: 100%;
   overflow: hidden;
   background-color: #F5F6F8;
@@ -19,9 +20,12 @@ body {
 }
 
 #root {
-  height: 100dvh;
+  height: 100%;
+  height: -webkit-fill-available;
   width: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 允许文本输入的区域可选择 */

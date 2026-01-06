@@ -23,138 +23,129 @@ export const HOME_CATEGORIES = [
   { name: '粮油调味', id: 'oil' },
 ];
 
-// Helper to generate reliable SVG placeholders (No external network required)
-const getPlaceholder = (text: string, bgColor: string) => {
-  const svg = `
-  <svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
-    <rect width="400" height="300" fill="${bgColor}"/>
-    <text x="50%" y="50%" font-family="sans-serif" font-size="40" font-weight="bold" fill="white" text-anchor="middle" dy=".3em">${text}</text>
-  </svg>`;
-  return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`;
-};
+
 
 export const MOCK_PRODUCTS: Product[] = [
   {
     id: '1',
     name: '川味宫保鸡丁',
-    description: '精选鸡胸肉，搭配花生米与干辣椒，香辣过瘾。',
+    description: '精选嫩滑鸡粒，搭配酥脆花生与正宗川味干辣椒，酱香浓郁，回味微甜。',
     price: 12.50,
     category: Category.MAINS,
-    image: getPlaceholder('宫保鸡丁', '#FFB000'), // Orange
+    image: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=800&auto=format&fit=crop',
     stock: 50,
     sales: 1205,
     tags: ['香辣', '招牌']
   },
   {
     id: '2',
-    name: '秘制卤肉饭',
-    description: '慢火炖煮五花肉，肥而不腻，配半个卤蛋。',
+    name: '台式秘制卤肉饭',
+    description: '慢火细熬手切五花肉，油亮肥美不松散，浸润每一粒精选香米。',
     price: 15.00,
     category: Category.MAINS,
-    image: getPlaceholder('卤肉饭', '#FF8C00'), // Dark Orange
+    image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop',
     stock: 30,
     sales: 890,
     tags: ['销量王']
   },
   {
     id: '3',
-    name: '清炒时蔬',
-    description: '当季新鲜蔬菜，大火快炒，保留营养。',
+    name: '田园清炒时蔬',
+    description: '每日清晨直采时令鲜蔬，极致火候快炒，保留食材原本的清脆与鲜甜。',
     price: 9.00,
     category: Category.MAINS,
-    image: getPlaceholder('时蔬', '#87CEEB'), // Sky Blue
+    image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop',
     stock: 100,
     sales: 450,
     tags: ['素食', '健康']
   },
   {
     id: '4',
-    name: '红烧牛肉面',
-    description: '牛骨熬制高汤，大块牛肉，面条劲道。',
+    name: '私房红烧牛肉面',
+    description: '12小时大骨高汤熬制，大块牛腩入口即化，手工宽面劲道十足。',
     price: 14.00,
     category: Category.MAINS,
-    image: getPlaceholder('牛肉面', '#D2691E'), // Chocolate
+    image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop',
     stock: 25,
     sales: 2100,
-    tags: ['热销']
+    tags: ['能量餐']
   },
   {
     id: '5',
-    name: '脆皮春卷 (3个)',
-    description: '外皮酥脆，内馅丰富，素菜精选。',
+    name: '金黄脆皮春卷',
+    description: '外皮金黄酥脆，咬下一口咔嚓作响，内馅包含木耳、香菇等多种鲜美菌菇。',
     price: 5.00,
     category: Category.SNACKS,
-    image: getPlaceholder('春卷', '#FFD700'), // Gold
+    image: 'https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?q=80&w=800&auto=format&fit=crop',
     stock: 80,
     sales: 600,
     tags: ['酥脆']
   },
   {
     id: '6',
-    name: '香酥炸鸡翅',
-    description: '金黄酥脆，鲜嫩多汁，秘制腌料。',
+    name: '新奥尔良炸鸡翅',
+    description: '独家秘制腌料入味，外皮焦亮，肉质鲜美多汁，撕开即见诱人肉汁。',
     price: 8.00,
     category: Category.SNACKS,
-    image: getPlaceholder('炸鸡翅', '#FFA07A'), // Light Salmon
+    image: 'https://images.unsplash.com/photo-1567622445821-ff9680edaee7?q=80&w=800&auto=format&fit=crop',
     stock: 40,
     sales: 320,
-    tags: ['美味']
+    tags: ['人气']
   },
   {
     id: '7',
-    name: '港式冻柠茶',
-    description: '新鲜柠檬手打，茶味浓郁，解暑神器。',
+    name: '爆汁手打柠檬茶',
+    description: '精选广东香水柠檬，暴力手打出汁，茶底醇厚，清爽解腻的最佳拍档。',
     price: 4.00,
     category: Category.DRINKS,
-    image: getPlaceholder('冻柠茶', '#20B2AA'), // Light Sea Green
+    image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop',
     stock: 200,
     sales: 1500,
     tags: ['冰镇']
   },
   {
     id: '8',
-    name: '珍珠奶茶',
-    description: '经典奶茶，搭配软糯Q弹的黑糖珍珠。',
+    name: '经典醇香珍珠奶茶',
+    description: '进口锡兰红茶底，混合新西兰牧场牛乳，珍珠Q弹软糯，甜而不腻。',
     price: 6.00,
     category: Category.DRINKS,
-    image: getPlaceholder('奶茶', '#DEB887'), // Burlywood
+    image: 'https://images.unsplash.com/photo-1594911772125-07fc7a2d8d9f?q=80&w=800&auto=format&fit=crop',
     stock: 150,
     sales: 980,
     tags: ['甜蜜']
   },
   {
     id: '9',
-    name: '泰国香米',
-    description: '进口香米，软糯香甜。',
+    name: '泰国原产苏玛里香米',
+    description: '原产地直供，米粒修长，烹饪后清香四溢，口感软糯。',
     price: 88.00,
     category: Category.MAINS,
-    image: getPlaceholder('泰国香米', '#F0E68C'), // Khaki
+    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=800&auto=format&fit=crop',
     stock: 10,
     sales: 56,
-    tags: ['进口']
+    tags: ['高端']
   },
   {
     id: '10',
-    name: '车厘子 (500g)',
-    description: '智利进口车厘子，个大饱满。',
+    name: '进口红钻车厘子',
+    description: '果径超大，皮薄多汁，脆爽甘甜，富含多种花青素。',
     price: 39.90,
     category: Category.SNACKS,
-    image: getPlaceholder('车厘子', '#DC143C'), // Crimson
+    image: 'https://images.unsplash.com/photo-1528821128474-27f963b062bf?q=80&w=800&auto=format&fit=crop',
     stock: 20,
     sales: 120,
-    tags: ['生鲜', '特价']
+    tags: ['生鲜']
   },
-  // 添加套餐数据
   {
     id: '11',
-    name: '经典午餐套餐',
-    description: '包含主食+小吃+饮品，营养均衡，性价比高。',
+    name: '元气职人午餐套餐',
+    description: '包含私房牛肉面+脆皮春卷+手打柠檬茶。今日份的加油站！',
     price: 22.00,
     category: Category.COMBOS,
-    image: getPlaceholder('午餐套餐', '#4682B4'), // Steel Blue
+    image: 'https://images.unsplash.com/photo-1543339308-43e59d6b73a6?q=80&w=800&auto=format&fit=crop',
     stock: 50,
     sales: 1800,
-    tags: ['热销', '划算'],
+    tags: ['热销', '推荐'],
     comboItems: [
       { id: 'c11-1', name: '红烧牛肉面', quantity: '1份', price: 14.00 },
       { id: 'c11-2', name: '脆皮春卷', quantity: '2个', price: 3.00 },
@@ -163,64 +154,14 @@ export const MOCK_PRODUCTS: Product[] = [
   },
   {
     id: '12',
-    name: '豪华晚餐套餐',
-    description: '包含主菜+汤+小吃+饮品，丰盛美味。',
-    price: 35.00,
-    category: Category.COMBOS,
-    image: getPlaceholder('晚餐套餐', '#8B4513'), // Saddle Brown
-    stock: 30,
-    sales: 1200,
-    tags: ['豪华', '美味'],
-    comboItems: [
-      { id: 'c12-1', name: '川味宫保鸡丁', quantity: '1份', price: 12.50 },
-      { id: 'c12-2', name: '番茄蛋汤', quantity: '1份', price: 5.00 },
-      { id: 'c12-3', name: '香酥炸鸡翅', quantity: '2个', price: 5.00 },
-      { id: 'c12-4', name: '珍珠奶茶', quantity: '1杯', price: 6.00 }
-    ]
-  },
-  {
-    id: '13',
-    name: '素食主义套餐',
-    description: '全素食套餐，营养丰富，健康美味。',
-    price: 18.00,
-    category: Category.COMBOS,
-    image: getPlaceholder('素食套餐', '#32CD32'), // Lime Green
-    stock: 40,
-    sales: 900,
-    tags: ['素食', '健康'],
-    comboItems: [
-      { id: 'c13-1', name: '清炒时蔬', quantity: '1份', price: 9.00 },
-      { id: 'c13-2', name: '蔬菜沙拉', quantity: '1份', price: 6.00 },
-      { id: 'c13-3', name: '豆浆', quantity: '1杯', price: 2.00 }
-    ]
-  },
-  {
-    id: '14',
-    name: '儿童营养套餐',
-    description: '专为儿童设计，营养均衡，口感清淡。',
-    price: 15.00,
-    category: Category.COMBOS,
-    image: getPlaceholder('儿童套餐', '#FF69B4'), // Hot Pink
-    stock: 60,
-    sales: 1500,
-    tags: ['儿童', '营养'],
-    comboItems: [
-      { id: 'c14-1', name: '蒸蛋羹', quantity: '1份', price: 5.00 },
-      { id: 'c14-2', name: '白米饭', quantity: '1份', price: 2.00 },
-      { id: 'c14-3', name: '清炒西兰花', quantity: '1份', price: 6.00 },
-      { id: 'c14-4', name: '苹果汁', quantity: '1杯', price: 4.00 }
-    ]
-  },
-  {
-    id: '15',
-    name: '情侣双人套餐',
-    description: '包含两份主菜+两份饮品+一份小吃，适合情侣分享。',
+    name: '周末犒赏双人套餐',
+    description: '秘制卤肉饭、宫保鸡丁双重满足，外加鸡翅与醇香奶茶，分享美味时光。',
     price: 58.00,
     category: Category.COMBOS,
-    image: getPlaceholder('情侣套餐', '#FF1493'), // Deep Pink
+    image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=800&auto=format&fit=crop',
     stock: 25,
     sales: 800,
-    tags: ['情侣', '浪漫'],
+    tags: ['超值', '双人'],
     comboItems: [
       { id: 'c15-1', name: '红烧牛肉面', quantity: '1份', price: 14.00 },
       { id: 'c15-2', name: '秘制卤肉饭', quantity: '1份', price: 15.00 },

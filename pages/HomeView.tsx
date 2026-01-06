@@ -18,9 +18,9 @@ interface HomeViewProps {
 }
 
 const BANNERS = [
-    { id: 1, image: '/assets/banners/promo_banners.png', title: '匠心好味道', subtitle: '严选食材，新鲜每一天' },
-    { id: 2, image: '/assets/banners/promo_banners.png', title: '轻食新选择', subtitle: '低卡健康，活力满分' },
-    { id: 3, image: '/assets/banners/promo_banners.png', title: '暖心汤面', subtitle: '正宗风味，回味无穷' },
+    { id: 1, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1200&auto=format&fit=crop', title: '匠心好味道', subtitle: '严选食材，新鲜每一天' },
+    { id: 2, image: 'https://images.unsplash.com/photo-1543353071-873f17a7a088?q=80&w=1200&auto=format&fit=crop', title: '轻食新选择', subtitle: '低卡健康，活力满分' },
+    { id: 3, image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?q=80&w=1200&auto=format&fit=crop', title: '暖心午餐', subtitle: '正宗风味，回味无穷' },
 ];
 
 export const HomeView: React.FC<HomeViewProps> = ({
@@ -64,10 +64,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
         if (category === '全部') {
             container.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (category === '人气热销') {
+            const element = categoryRefs.current['人气热销'];
+            if (element) {
+                const top = element.offsetTop - 10;
+                container.scrollTo({ top, behavior: 'smooth' });
+            }
         } else {
             const element = categoryRefs.current[category];
             if (element) {
-                const top = element.offsetTop - 40;
+                const top = element.offsetTop - 10;
                 container.scrollTo({ top, behavior: 'smooth' });
             }
         }
@@ -132,11 +138,17 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 <div className="w-[88px] bg-[#F5F6F8] overflow-y-auto no-scrollbar shrink-0 pb-32">
                     <button
                         onClick={() => scrollToCategory('全部')}
-                        className={`w-full h-14 flex items-center justify-center text-[13px] relative transition-all duration-300 ${activeCategory === '全部' ? 'bg-white text-[#0052D9] font-bold shadow-[inset_4px_0_0_0_rgba(0,82,217,1)]' : 'text-gray-500 hover:bg-white/50'}`}
+                        className={`w-full h-14 flex items-center justify-center text-[13px] relative transition-all duration-300 ${activeCategory === '全部' || activeCategory === '今日疯抢' ? 'bg-white text-[#0052D9] font-bold shadow-[inset_4px_0_0_0_rgba(0,82,217,1)]' : 'text-gray-500 hover:bg-white/50'}`}
                     >
                         今日疯抢
                     </button>
-                    {categories.map(cat => (
+                    <button
+                        onClick={() => scrollToCategory('人气热销')}
+                        className={`w-full h-14 flex items-center justify-center text-[13px] relative transition-all duration-300 ${activeCategory === '人气热销' ? 'bg-white text-[#0052D9] font-bold shadow-[inset_4px_0_0_0_rgba(0,82,217,1)]' : 'text-gray-500 hover:bg-white/50'}`}
+                    >
+                        人气热销
+                    </button>
+                    {categories.filter(cat => cat !== '人气热销').map(cat => (
                         <button
                             key={cat}
                             onClick={() => scrollToCategory(cat)}
@@ -173,21 +185,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                                <div className="space-y-6">
-                                    {[1, 2, 3].map(i => (
-                                        <div key={i} className="flex gap-3">
-                                            <Skeleton className="w-24 h-24 rounded-xl" />
-                                            <div className="flex-1 space-y-2 py-1">
-                                                <Skeleton className="w-3/4 h-5" />
-                                                <Skeleton className="w-full h-4" />
-                                                <div className="flex justify-between items-end mt-4">
-                                                    <Skeleton className="w-20 h-6" />
-                                                    <Skeleton className="w-8 h-8 rounded-full" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ))}
                                 </div>
                             </div>
                         ) : (
@@ -233,42 +230,61 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                     </div>
                                 </div>
 
-                                {/* Horizontal Scroll Section */}
+                                {/* Horizontal Scroll Section (Flash Sale) */}
                                 <div className="mb-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="flex items-center gap-2">
+                                            <div className="w-1 h-4 bg-[#0052D9] rounded-full"></div>
                                             <h3 className="font-bold text-base text-gray-900">今日疯抢</h3>
-                                            <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm">限时秒杀</span>
+                                            <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold shadow-sm">今日限购</span>
                                         </div>
-                                        <button className="text-xs text-gray-400 flex items-center gap-0.5">更多 <ChevronDown size={12} className="-rotate-90" /></button>
                                     </div>
-                                    <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 snap-x">
-                                        {MOCK_PRODUCTS.slice(0, 5).map(product => (
-                                            <div key={product.id} className="snap-start w-36 min-w-[9rem] shrink-0 bg-white rounded-xl shadow-card border border-gray-50 overflow-hidden flex flex-col active:scale-[0.98] transition-transform duration-300" onClick={() => onProductClick(product)}>
-                                                <div className="relative h-28 overflow-hidden group">
-                                                    <img src={product.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                                                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2 pt-6">
-                                                        <div className="text-white text-sm font-bold font-mono">¥{product.price}</div>
+                                    <div className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 snap-x scroll-pl-4">
+                                        <div className="w-1 shrink-0" /> {/* 4px w-1 + 12px gap-3 = 16px (matches p-4) */}
+                                        {MOCK_PRODUCTS.slice(0, 5).map(product => {
+                                            const soldPercent = Math.floor((product.sales / (product.sales + product.stock)) * 100);
+                                            return (
+                                                <div key={product.id} className="snap-start w-36 min-w-[9rem] shrink-0 bg-white rounded-xl shadow-card border border-gray-50 overflow-hidden flex flex-col active:scale-[0.98] transition-all duration-300" onClick={() => onProductClick(product)}>
+                                                    <div className="relative h-28 overflow-hidden group">
+                                                        <img src={product.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2 pt-6">
+                                                            <div className="text-white text-sm font-bold font-mono">¥{product.price}</div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="p-2.5 flex flex-col justify-between flex-1 gap-2">
+                                                        <h4 className="text-[13px] font-bold text-gray-800 line-clamp-1">{product.name}</h4>
+                                                        <div className="space-y-1">
+                                                            <div className="flex justify-between items-center text-[9px] text-gray-400">
+                                                                <span>已抢 {soldPercent}%</span>
+                                                            </div>
+                                                            <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
+                                                                <div
+                                                                    className="h-full bg-gradient-to-r from-red-500 to-pink-500 rounded-full"
+                                                                    style={{ width: `${soldPercent}%` }}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                                                            className="w-full bg-red-50 text-red-600 text-[10px] py-1.5 rounded-lg font-bold hover:bg-red-100 active:scale-95 transition-all shadow-sm"
+                                                        >
+                                                            马上抢
+                                                        </button>
                                                     </div>
                                                 </div>
-                                                <div className="p-2.5 flex flex-col justify-between flex-1 gap-2">
-                                                    <h4 className="text-[13px] font-bold text-gray-800 line-clamp-1">{product.name}</h4>
-                                                    <button
-                                                        onClick={(e) => { e.stopPropagation(); addToCart(product); }}
-                                                        className="w-full bg-red-50 text-red-600 text-[10px] py-1.5 rounded-lg font-bold hover:bg-red-100 transition-colors"
-                                                    >
-                                                        抢购
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))}
+                                            );
+                                        })}
+                                        <div className="w-1 shrink-0" />
                                     </div>
                                 </div>
 
                                 <div className="bg-gray-50 h-[10px] -mx-4 mb-6"></div>
 
-                                {/* Sticky Header inside scroll view replaced by section rendering */}
-                                <div className="mb-2 flex items-center gap-2">
+                                {/* Popular Section */}
+                                <div
+                                    ref={el => categoryRefs.current['人气热销'] = el}
+                                    className="mb-2 flex items-center gap-2"
+                                >
                                     <div className="w-1 h-4 bg-[#0052D9] rounded-full"></div>
                                     <span className="font-bold text-base text-gray-900">人气热销</span>
                                 </div>
@@ -414,8 +430,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         )}
                     </div>
                 </div>
-            </div>
-
-        </div>
+            </div >
+        </div >
     );
 };

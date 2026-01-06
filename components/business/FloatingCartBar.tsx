@@ -33,7 +33,7 @@ export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
 
     return (
         <div
-            className={`fixed left-0 right-0 z-[160] transition-all duration-300 ${isExpanded
+            className={`fixed left-0 right-0 z-[200] transition-all duration-300 ${isExpanded
                 ? 'bottom-0 bg-white border-t border-gray-100 pb-safe shadow-[0_-5px_15px_rgba(0,0,0,0.08)]'
                 : 'px-4 pointer-events-none'
                 }`}
