@@ -36,7 +36,7 @@ const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) =
     animate={{ opacity: 1, x: 0 }}
     exit={{ opacity: 0, x: -20 }}
     transition={{ duration: 0.2 }}
-    className="h-full w-full"
+    className="h-full w-full flex-1 min-h-0 flex flex-col"
   >
     {children}
   </motion.div>

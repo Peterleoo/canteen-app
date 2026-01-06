@@ -165,6 +165,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 >
                     <div
                         className="flex-1 overflow-y-auto pb-40 smooth-scroll"
+                        style={{ overscrollBehaviorY: 'contain' }}
                         ref={rightScrollRef}
                         onScroll={handleScroll}
                     >
@@ -241,7 +242,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                     </div>
                                     <div
                                         className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 snap-x scroll-pl-4 smooth-scroll"
-                                        style={{ touchAction: 'pan-x', WebkitOverflowScrolling: 'touch' }}
+                                        style={{ touchAction: 'pan-x pan-y', WebkitOverflowScrolling: 'touch' }}
                                     >
                                         {MOCK_PRODUCTS.slice(0, 5).map(product => {
                                             const soldPercent = Math.floor((product.sales / (product.sales + product.stock)) * 100);
