@@ -2,15 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 全局锁定，模拟原生 App 体验 */
+/* 极简高度锁定，防止 iOS 全局橡皮筋干扰 */
 html,
-body,
-#root {
+body {
   height: 100%;
   height: -webkit-fill-available;
+  height: 100dvh;
   width: 100%;
-  overflow-x: hidden;
-  /* Allow vertical growth but keep horizontal locked */
+  overflow: hidden;
+  position: fixed;
+  /* 决胜招：彻底杜绝 iOS 视口穿透与橡皮筋 */
   background-color: #F5F6F8;
   font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -18,8 +19,22 @@ body,
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   user-select: none;
+}
+
+#root {
+  height: 100%;
+  height: -webkit-fill-available;
+  height: 100dvh;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+
+/* Flex 子项高度塌陷修复 (iOS 滚动死锁良药) */
+.flex-1 {
+  flex: 1 1 0%;
+  min-height: 0;
 }
 
 /* 允许文本输入的区域可选择 */

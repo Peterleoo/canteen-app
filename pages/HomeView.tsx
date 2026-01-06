@@ -161,7 +161,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
                 {/* Right Content Area */}
                 <div
-                    className="flex-1 bg-white rounded-tl-[24px] overflow-visible shadow-[-4px_0_24px_rgba(0,0,0,0.02)] z-10"
+                    className="flex-1 min-h-0 bg-white rounded-tl-[24px] overflow-visible shadow-[-4px_0_24px_rgba(0,0,0,0.02)] z-10"
                 >
                     <div
                         className="h-full overflow-y-auto pb-40 smooth-scroll"
