@@ -2,9 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 视口基准重构：回归标准方案以解决对齐与底部间隙 */
+/* 视口锁定重构：强制物理屏幕填充，解决 iOS PWA 间隙与滚动死锁 */
 html,
 body {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 100%;
   height: -webkit-fill-available;
   width: 100%;
@@ -29,8 +34,8 @@ body {
 
 /* Flex 子项高度塌陷修复 (iOS 滚动死锁良药) */
 .flex-1 {
-  flex: 1 1 0%;
-  min-height: 0;
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
 }
 
 /* 允许文本输入的区域可选择 */

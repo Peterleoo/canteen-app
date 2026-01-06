@@ -11,7 +11,7 @@ interface LocationModalProps {
 
 export const LocationModal: React.FC<LocationModalProps> = ({ selectedCanteen, onSelect, onClose }) => {
     return (
-        <div className="absolute inset-0 z-[200] flex flex-col justify-end bg-black/50 animate-fade-in">
+        <div className="fixed inset-0 z-[1000] flex flex-col justify-end bg-black/60 backdrop-blur-sm animate-fade-in">
             <div className="bg-white w-full rounded-t-2xl max-h-[70vh] flex flex-col animate-slide-in-bottom pb-safe">
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
                     <h3 className="font-bold text-lg text-gray-800">选择就餐点</h3>
