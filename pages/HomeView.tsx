@@ -161,7 +161,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
                 {/* Right Content Area */}
                 <div
-                    className="flex-1 min-h-0 bg-white rounded-tl-[24px] overflow-visible shadow-[-4px_0_24px_rgba(0,0,0,0.02)] z-10"
+                    className="flex-1 min-h-0 bg-white rounded-tl-[24px] overflow-hidden shadow-[-4px_0_24px_rgba(0,0,0,0.02)] z-10"
                 >
                     <div
                         className="h-full overflow-y-auto pb-40 smooth-scroll"
@@ -240,10 +240,9 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                         </div>
                                     </div>
                                     <div
-                                        className="flex gap-3 overflow-x-auto no-scrollbar pb-4 snap-x scroll-pl-4 smooth-scroll"
+                                        className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 snap-x smooth-scroll"
                                         style={{ touchAction: 'pan-x', WebkitOverflowScrolling: 'touch' }}
                                     >
-                                        <div className="w-1 shrink-0" />
                                         {MOCK_PRODUCTS.slice(0, 5).map(product => {
                                             const soldPercent = Math.floor((product.sales / (product.sales + product.stock)) * 100);
                                             return (
@@ -277,7 +276,6 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                                 </div>
                                             );
                                         })}
-                                        <div className="w-1 shrink-0" />
                                     </div>
                                 </div>
 

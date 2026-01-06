@@ -2,15 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 视口锁定重构：使用绝对定位强制填充物理屏幕 */
+/* 视口基准重构：回归标准方案以解决对齐与底部间隙 */
 html,
-body,
-#root {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+body {
+  height: 100%;
+  height: -webkit-fill-available;
   width: 100%;
   overflow: hidden;
   background-color: #F5F6F8;
@@ -20,8 +16,15 @@ body,
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   user-select: none;
+}
+
+#root {
+  height: 100%;
+  height: -webkit-fill-available;
+  width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 /* Flex 子项高度塌陷修复 (iOS 滚动死锁良药) */
