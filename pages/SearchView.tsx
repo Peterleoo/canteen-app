@@ -82,9 +82,18 @@ export const SearchView: React.FC<SearchViewProps> = ({
                         <ChevronLeft size={20} />
                     </motion.button>
 
-                    <div className={`flex-1 relative transition-all duration-300 ${isFocused ? 'ring-2 ring-blue-500/20' : ''}`}>
-                        <div className={`flex items-center gap-2 h-11 px-4 rounded-2xl transition-all duration-300 ${isFocused ? 'bg-white shadow-lg' : 'bg-gray-100/80'}`}>
-                            <Search size={18} className={`transition-colors duration-300 ${isFocused ? 'text-blue-500' : 'text-gray-400'}`} />
+                    <div className="flex-1 relative">
+                        <motion.div
+                            animate={{
+                                scale: isFocused ? 1.01 : 1,
+                                backgroundColor: isFocused ? '#fff' : 'rgba(243, 244, 246, 0.8)'
+                            }}
+                            className={`flex items-center gap-2 h-11 px-4 rounded-2xl transition-all duration-500 ${isFocused
+                                    ? 'shadow-[0_0_20px_rgba(59,130,246,0.15),0_4px_12px_rgba(0,0,0,0.05)] border border-blue-500/20'
+                                    : 'bg-gray-100/80 border border-transparent'
+                                }`}
+                        >
+                            <Search size={18} className={`transition-colors duration-500 ${isFocused ? 'text-blue-500' : 'text-gray-400'}`} />
                             <input
                                 ref={inputRef}
                                 autoFocus
@@ -102,6 +111,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                                         initial={{ scale: 0, opacity: 0 }}
                                         animate={{ scale: 1, opacity: 1 }}
                                         exit={{ scale: 0, opacity: 0 }}
+                                        whileTap={{ scale: 0.8 }}
                                         onClick={() => setSearchQuery('')}
                                         className="p-1 text-gray-400 hover:text-gray-600"
                                     >
@@ -109,7 +119,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                                     </motion.button>
                                 )}
                             </AnimatePresence>
-                        </div>
+                        </motion.div>
                     </div>
                 </div>
             </div>

@@ -87,10 +87,38 @@ textarea {
   scrollbar-width: none;
 }
 
+/* IOS Scroll and Height Specific Fixes */
+.smooth-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  /* Force inertia scrolling on iOS */
+}
+
+/* On iOS, smooth scroll sometimes locks the UI, use auto as backup if jittery */
+@supports (-webkit-overflow-scrolling: touch) {
+  .smooth-scroll {
+    scroll-behavior: auto !important;
+  }
+}
+
 .pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .pt-safe {
-  padding-top: env(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Custom scrollbar for premium look */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
 }
