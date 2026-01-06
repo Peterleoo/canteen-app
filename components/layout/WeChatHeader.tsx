@@ -15,8 +15,6 @@ export const WeChatHeader: React.FC<WeChatHeaderProps> = ({
     className = ""
 }) => (
     <div className={`shrink-0 z-50 pt-safe transition-all duration-300 ${dark ? 'bg-transparent text-white' : 'bg-white text-black'} ${className}`}>
-        {/* Safe Area Spacer for PWA */}
-        <div className="h-[env(safe-area-inset-top,0px)] w-full" />
         {/* Navigation Bar */}
         <div className="relative h-[44px] flex items-center justify-center px-4">
             {onBack && (

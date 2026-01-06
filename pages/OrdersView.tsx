@@ -14,7 +14,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ onOrderClick }) => {
     return (
         <div className="flex flex-col h-full bg-[#f7f8fa]">
             <WeChatHeader title="订单列表" />
-            <div className="flex-1 overflow-y-auto p-4 pb-20 space-y-3">
+            <div className="flex-1 overflow-y-auto p-4 pb-20 space-y-3 smooth-scroll">
                 {orders.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[60vh] text-gray-400">
                         <History size={48} className="mb-4 opacity-20" />

@@ -32,7 +32,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
     return (
         <div className="flex flex-col h-full bg-[#f7f8fa]">
             <WeChatHeader title="个人中心" />
-            <div className="flex-1 overflow-y-auto pb-20">
+            <div className="flex-1 overflow-y-auto pb-20 smooth-scroll">
                 <div className="bg-white p-6 mb-2 flex items-center gap-4">
                     <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm">
                         {user ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-full h-full p-4 text-gray-400" />}
