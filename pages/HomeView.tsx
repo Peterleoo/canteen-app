@@ -240,7 +240,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                         </div>
                                     </div>
                                     <div
-                                        className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 snap-x smooth-scroll"
+                                        className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 snap-x scroll-pl-4 smooth-scroll"
                                         style={{ touchAction: 'pan-x', WebkitOverflowScrolling: 'touch' }}
                                     >
                                         {MOCK_PRODUCTS.slice(0, 5).map(product => {
