@@ -54,8 +54,8 @@ export const SearchView: React.FC<SearchViewProps> = ({
     };
 
     const filtered = searchQuery.trim() ? products.filter(p =>
-        p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
     ) : [];
 
