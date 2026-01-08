@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
 import { MapPin, ChevronDown, Search, Minus, Plus } from 'lucide-react';
 import { Product, Canteen, Category } from '../types';
-import { MOCK_PRODUCTS } from '../constants';
 import { WeChatHeader } from '../components/layout/WeChatHeader';
 import { formatSales } from '../utils/format';
+import { getProducts } from '../services/productService';
 import { useCartStore } from '../stores/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton } from '../components/common/Skeleton';
@@ -34,17 +34,29 @@ export const HomeView: React.FC<HomeViewProps> = ({
     const { addToCart, removeFromCart, getCartQuantity } = useCartStore();
     const [isLoading, setIsLoading] = React.useState(true);
     const [currentBanner, setCurrentBanner] = React.useState(0);
+    const [products, setProducts] = React.useState<Product[]>([]);
     const categoryRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
     const rightScrollRef = useRef<HTMLDivElement>(null);
     const isScrollingRef = useRef(false);
 
     React.useEffect(() => {
-        const timer = setTimeout(() => setIsLoading(false), 1200);
+        const loadData = async () => {
+            setIsLoading(true);
+            try {
+                const fetchedProducts = await getProducts();
+                setProducts(fetchedProducts);
+            } catch (error) {
+                console.error("Failed to load products", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadData();
+
         const bannerTimer = setInterval(() => {
             setCurrentBanner(prev => (prev + 1) % BANNERS.length);
         }, 5000);
         return () => {
-            clearTimeout(timer);
             clearInterval(bannerTimer);
         };
     }, []);
@@ -52,7 +64,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
     const categories = Object.values(Category);
     const groupedProducts = categories.map(cat => ({
         category: cat,
-        products: MOCK_PRODUCTS.filter(p => p.category === cat)
+        products: products.filter(p => p.category === cat)
     })).filter(group => group.products.length > 0);
 
     const scrollToCategory = (category: string) => {
@@ -244,7 +256,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                         className="flex gap-3 overflow-x-auto no-scrollbar pb-4 -mx-4 px-4 snap-x scroll-pl-4 smooth-scroll"
                                         style={{ touchAction: 'pan-x pan-y', WebkitOverflowScrolling: 'touch' }}
                                     >
-                                        {MOCK_PRODUCTS.slice(0, 5).map(product => {
+                                        {products.slice(0, 5).map(product => {
                                             const soldPercent = Math.floor((product.sales / (product.sales + product.stock)) * 100);
                                             return (
                                                 <div key={product.id} className="snap-start w-36 min-w-[9rem] shrink-0 bg-white rounded-xl shadow-card border border-gray-50 overflow-hidden flex flex-col active:scale-[0.98] transition-all duration-300" onClick={() => onProductClick(product)}>
@@ -292,7 +304,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                 </div>
 
                                 <div className="space-y-6">
-                                    {[...MOCK_PRODUCTS].sort((a, b) => b.sales - a.sales).slice(0, 8).map(product => {
+                                    {[...products].sort((a, b) => b.sales - a.sales).slice(0, 8).map(product => {
                                         const qty = getCartQuantity(product.id);
                                         return (
                                             <motion.div

@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Search, X, Minus, Plus, TrendingUp, History, Sparkles } from 'lucide-react';
 import { Product } from '../types';
-import { MOCK_PRODUCTS } from '../constants';
 import { useCartStore } from '../stores/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getProducts } from '../services/productService';
 
 interface SearchViewProps {
     onBack: () => void;
@@ -18,14 +18,21 @@ export const SearchView: React.FC<SearchViewProps> = ({
 }) => {
     const { addToCart, removeFromCart, getCartQuantity } = useCartStore();
     const [searchQuery, setSearchQuery] = useState('');
+    const [products, setProducts] = useState<Product[]>([]);
     const [history, setHistory] = useState<string[]>([]);
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Load history from local storage
+    // Load history and products
     useEffect(() => {
         const savedHistory = localStorage.getItem('search_history');
         if (savedHistory) setHistory(JSON.parse(savedHistory));
+
+        const fetchProducts = async () => {
+            const data = await getProducts();
+            setProducts(data);
+        };
+        fetchProducts();
     }, []);
 
     const saveHistory = (query: string) => {
@@ -46,7 +53,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
         inputRef.current?.blur();
     };
 
-    const filtered = searchQuery.trim() ? MOCK_PRODUCTS.filter(p =>
+    const filtered = searchQuery.trim() ? products.filter(p =>
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         p.tags?.some(t => t.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -141,7 +148,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                                     <h3 className="text-[15px] font-bold text-gray-800">热门搜索</h3>
                                 </div>
                                 <div className="flex flex-wrap gap-2.5">
-                                    {HOT_SEARCHES.map((tag, i) => (
+                                    {HOT_SEARCHES.map((tag) => (
                                         <motion.button
                                             key={tag}
                                             whileHover={{ y: -2 }}
