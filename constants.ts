@@ -1,11 +1,11 @@
 import { Category, Product, Canteen } from './types';
 
 export const CANTEENS: Canteen[] = [
-  { id: '1', name: '万科滨河道店 (当前定位)', distance: '0m', address: '滨河道1号' },
-  { id: '2', name: '一食堂 (A区)', distance: '150m', address: '教学楼A区东侧' },
-  { id: '3', name: '二食堂 (B区)', distance: '800m', address: '宿舍楼B区南侧' },
-  { id: '4', name: '教工餐厅', distance: '1.2km', address: '行政楼顶层' },
-  { id: '5', name: '南门外卖柜', distance: '500m', address: '南门入口处' },
+  { id: '1', name: '万科滨河道店 (当前定位)', distance: '0m', address: '滨河道1号', status: 'OPEN', isAutoAcceptOrders: false, weekdayOpenTime: '08:00', weekdayCloseTime: '20:00', weekendOpenTime: '09:00', weekendCloseTime: '18:00', stockAlertThreshold: 10, isLowStockNotification: false, isDeliveryActive: true, deliveryRadius: 5, minDeliveryAmount: 20, deliveryFee: 2.5, freeDeliveryThreshold: 50, defaultPackagingFee: 0.5 },
+  { id: '2', name: '一食堂 (A区)', distance: '150m', address: '教学楼A区东侧', status: 'OPEN', isAutoAcceptOrders: false, weekdayOpenTime: '08:00', weekdayCloseTime: '20:00', weekendOpenTime: '09:00', weekendCloseTime: '18:00', stockAlertThreshold: 10, isLowStockNotification: false, isDeliveryActive: true, deliveryRadius: 5, minDeliveryAmount: 20, deliveryFee: 2.5, freeDeliveryThreshold: 50, defaultPackagingFee: 0.5 },
+  { id: '3', name: '二食堂 (B区)', distance: '800m', address: '宿舍楼B区南侧', status: 'OPEN', isAutoAcceptOrders: false, weekdayOpenTime: '08:00', weekdayCloseTime: '20:00', weekendOpenTime: '09:00', weekendCloseTime: '18:00', stockAlertThreshold: 10, isLowStockNotification: false, isDeliveryActive: true, deliveryRadius: 5, minDeliveryAmount: 20, deliveryFee: 2.5, freeDeliveryThreshold: 50, defaultPackagingFee: 0.5 },
+  { id: '4', name: '教工餐厅', distance: '1.2km', address: '行政楼顶层', status: 'OPEN', isAutoAcceptOrders: false, weekdayOpenTime: '08:00', weekdayCloseTime: '20:00', weekendOpenTime: '09:00', weekendCloseTime: '18:00', stockAlertThreshold: 10, isLowStockNotification: false, isDeliveryActive: true, deliveryRadius: 5, minDeliveryAmount: 20, deliveryFee: 2.5, freeDeliveryThreshold: 50, defaultPackagingFee: 0.5 },
+  { id: '5', name: '南门外卖柜', distance: '500m', address: '南门入口处', status: 'OPEN', isAutoAcceptOrders: false, weekdayOpenTime: '08:00', weekdayCloseTime: '20:00', weekendOpenTime: '09:00', weekendCloseTime: '18:00', stockAlertThreshold: 10, isLowStockNotification: false, isDeliveryActive: true, deliveryRadius: 5, minDeliveryAmount: 20, deliveryFee: 2.5, freeDeliveryThreshold: 50, defaultPackagingFee: 0.5 },
 ];
 
 export const PICKUP_LOCATIONS = CANTEENS.map(c => c.name);
@@ -35,7 +35,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?q=80&w=800&auto=format&fit=crop',
     stock: 50,
     sales: 1205,
-    tags: ['香辣', '招牌']
+    tags: ['香辣', '招牌'],
+    status: 'ACTIVE'
   },
   {
     id: '2',
@@ -46,7 +47,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop',
     stock: 30,
     sales: 890,
-    tags: ['销量王']
+    tags: ['销量王'],
+    status: 'ACTIVE'
   },
   {
     id: '3',
@@ -57,7 +59,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop',
     stock: 100,
     sales: 450,
-    tags: ['素食', '健康']
+    tags: ['素食', '健康'],
+    status: 'ACTIVE'
   },
   {
     id: '4',
@@ -68,7 +71,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?q=80&w=800&auto=format&fit=crop',
     stock: 25,
     sales: 2100,
-    tags: ['能量餐']
+    tags: ['能量餐'],
+    status: 'ACTIVE'
   },
   {
     id: '5',
@@ -79,7 +83,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?q=80&w=800&auto=format&fit=crop',
     stock: 80,
     sales: 600,
-    tags: ['酥脆']
+    tags: ['酥脆'],
+    status: 'ACTIVE'
   },
   {
     id: '6',
@@ -90,7 +95,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1567622445821-ff9680edaee7?q=80&w=800&auto=format&fit=crop',
     stock: 40,
     sales: 320,
-    tags: ['人气']
+    tags: ['人气'],
+    status: 'ACTIVE'
   },
   {
     id: '7',
@@ -101,7 +107,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop',
     stock: 200,
     sales: 1500,
-    tags: ['冰镇']
+    tags: ['冰镇'],
+    status: 'ACTIVE'
   },
   {
     id: '8',
@@ -112,7 +119,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1594911772125-07fc7a2d8d9f?q=80&w=800&auto=format&fit=crop',
     stock: 150,
     sales: 980,
-    tags: ['甜蜜']
+    tags: ['甜蜜'],
+    status: 'ACTIVE'
   },
   {
     id: '9',
@@ -123,7 +131,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?q=80&w=800&auto=format&fit=crop',
     stock: 10,
     sales: 56,
-    tags: ['高端']
+    tags: ['高端'],
+    status: 'ACTIVE'
   },
   {
     id: '10',
@@ -134,7 +143,8 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://images.unsplash.com/photo-1528821128474-27f963b062bf?q=80&w=800&auto=format&fit=crop',
     stock: 20,
     sales: 120,
-    tags: ['生鲜']
+    tags: ['生鲜'],
+    status: 'ACTIVE'
   },
   {
     id: '11',
@@ -146,6 +156,7 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 50,
     sales: 1800,
     tags: ['热销', '推荐'],
+    status: 'ACTIVE',
     comboItems: [
       { id: 'c11-1', name: '红烧牛肉面', quantity: '1份', price: 14.00 },
       { id: 'c11-2', name: '脆皮春卷', quantity: '2个', price: 3.00 },
@@ -162,6 +173,7 @@ export const MOCK_PRODUCTS: Product[] = [
     stock: 25,
     sales: 800,
     tags: ['超值', '双人'],
+    status: 'ACTIVE',
     comboItems: [
       { id: 'c15-1', name: '红烧牛肉面', quantity: '1份', price: 14.00 },
       { id: 'c15-2', name: '秘制卤肉饭', quantity: '1份', price: 15.00 },

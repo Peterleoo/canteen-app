@@ -107,14 +107,25 @@ export const App: React.FC = () => {
     // We need to construct the order
     const newOrder: Order = {
       id: `ORD-${Date.now().toString().slice(-8)}`,
-      items: [...cart],
-      total: cartItemTotal + deliveryFee,
+      userId: user?.id || 'anonymous',
+      canteenId: selectedCanteen.id,
       subtotal: cartItemTotal,
+      total: cartItemTotal + deliveryFee,
       status: deliveryMethod === 'DELIVERY' ? OrderStatus.DELIVERING : OrderStatus.READY_FOR_PICKUP,
-      date: new Date().toLocaleString('zh-CN', { hour12: false, month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
       deliveryMethod,
-      locationInfo: deliveryMethod === 'DELIVERY' ? deliveryLocation : selectedCanteen.name,
-      deliveryFee
+      deliveryFee,
+      addressDetail: deliveryMethod === 'DELIVERY' ? deliveryLocation : selectedCanteen.name,
+      date: new Date().toLocaleString('zh-CN', { hour12: false, month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      orderItems: cart.map(item => ({
+        id: Date.now() + Math.random(),
+        orderId: `ORD-${Date.now().toString().slice(-8)}`,
+        productName: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        createdAt: new Date().toISOString()
+      }))
     };
 
     addOrder(newOrder);

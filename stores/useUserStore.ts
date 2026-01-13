@@ -23,9 +23,12 @@ export const useUserStore = create<UserState>()(
             login: () => {
                 const mockUser = {
                     id: 'u123',
+                    username: 'wechat_user',
                     name: '微信用户',
                     phone: '138****8888',
                     avatar: generateLocalAvatar('微'),
+                    status: 'ACTIVE' as const,
+                    createdAt: new Date().toISOString(),
                 };
                 set((state) => {
                     const newState: Partial<UserState> = { user: mockUser, showLoginModal: false };

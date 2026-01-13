@@ -43,8 +43,8 @@ export const HomeView: React.FC<HomeViewProps> = ({
         const loadData = async () => {
             setIsLoading(true);
             try {
-                const fetchedProducts = await getProducts();
-                setProducts(fetchedProducts);
+                const fetchedProducts = await getProducts({});
+                setProducts(fetchedProducts.data);
             } catch (error) {
                 console.error("Failed to load products", error);
             } finally {

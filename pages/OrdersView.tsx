@@ -30,7 +30,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ onOrderClick }) => {
                             <div className="flex justify-between items-center mb-3 pb-3 border-b border-gray-50">
                                 <div className="flex items-center gap-2">
                                     <span className="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-sm">{order.deliveryMethod === 'DELIVERY' ? '外卖' : '自提'}</span>
-                                    <span className="font-bold text-gray-800 text-sm truncate max-w-[150px]">{order.locationInfo}</span>
+                                    <span className="font-bold text-gray-800 text-sm truncate max-w-[150px]">{order.addressDetail}</span>
                                     <ChevronRight size={14} className="text-gray-400" />
                                 </div>
                                 <span className="text-xs text-gray-500">{order.status}</span>
@@ -38,14 +38,14 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ onOrderClick }) => {
 
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2 overflow-hidden">
-                                    {order.items.slice(0, 3).map(item => (
-                                        <img key={item.id} src={item.image} className="w-12 h-12 rounded bg-gray-100 object-cover border border-gray-100" />
+                                    {order.orderItems?.slice(0, 3).map((item) => (
+                                        <div key={item.id} className="w-12 h-12 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-400">{item.productName}</div>
                                     ))}
-                                    {order.items.length > 3 && <div className="text-xs text-gray-400 bg-gray-50 h-12 px-2 flex items-center justify-center rounded">+{order.items.length - 3}</div>}
+                                    {order.orderItems?.length && order.orderItems.length > 3 && <div className="text-xs text-gray-400 bg-gray-50 h-12 px-2 flex items-center justify-center rounded">+{order.orderItems.length - 3}</div>}
                                 </div>
                                 <div className="text-right">
                                     <div className="font-bold text-gray-900 text-base font-mono">¥{order.total.toFixed(2)}</div>
-                                    <div className="text-[10px] text-gray-400">共{order.items.reduce((a, b) => a + b.quantity, 0)}件</div>
+                                    <div className="text-[10px] text-gray-400">共{order.orderItems?.reduce((a, b) => a + b.quantity, 0)}件</div>
                                 </div>
                             </div>
 

@@ -29,8 +29,8 @@ export const SearchView: React.FC<SearchViewProps> = ({
         if (savedHistory) setHistory(JSON.parse(savedHistory));
 
         const fetchProducts = async () => {
-            const data = await getProducts();
-            setProducts(data);
+            const data = await getProducts({});
+            setProducts(data.data);
         };
         fetchProducts();
     }, []);

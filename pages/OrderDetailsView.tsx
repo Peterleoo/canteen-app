@@ -60,18 +60,18 @@ export const OrderDetailsView: React.FC<OrderDetailsViewProps> = ({ order, onBac
                 <div className="bg-white rounded-xl overflow-hidden shadow-sm mb-4">
                     <div className="p-4 border-b border-gray-50 font-bold text-sm">商品信息</div>
                     <div className="p-4">
-                        {order.items.map(item => (
+                        {order.orderItems?.map(item => (
                             <div key={item.id} className="flex justify-between items-center mb-4 last:mb-0">
                                 <div className="flex items-center gap-3">
-                                    <img src={item.image} className="w-12 h-12 rounded bg-gray-100 object-cover" />
+                                    <img src="" className="w-12 h-12 rounded bg-gray-100 object-cover" />
                                     <div>
-                                        <div className="text-sm font-bold text-gray-800">{item.name}</div>
+                                        <div className="text-sm font-bold text-gray-800">{item.productName}</div>
                                         <div className="text-xs text-gray-400">x{item.quantity}</div>
                                     </div>
                                 </div>
                                 <div className="font-bold font-mono text-sm">¥{(item.price * item.quantity).toFixed(2)}</div>
                             </div>
-                        ))}
+                        )) || <div className="text-center text-gray-500 py-4">暂无商品信息</div>}
 
                         <div className="border-t border-dashed border-gray-100 my-4"></div>
 
@@ -112,7 +112,7 @@ export const OrderDetailsView: React.FC<OrderDetailsViewProps> = ({ order, onBac
                     </div>
                     <div className="flex justify-between text-xs">
                         <span className="text-gray-500">{order.deliveryMethod === 'DELIVERY' ? '收货地址' : '自提地点'}</span>
-                        <span className="text-gray-900 max-w-[60%] text-right truncate">{order.locationInfo}</span>
+                        <span className="text-gray-900 max-w-[60%] text-right truncate">{order.addressDetail}</span>
                     </div>
                 </div>
             </div>
