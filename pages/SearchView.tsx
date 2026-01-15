@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Search, X, Minus, Plus, TrendingUp, History, Sparkles } from 'lucide-react';
-import { Product } from '../types';
+import { Product, Canteen } from '../types';
 import { useCartStore } from '../stores/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProducts } from '../services/productService';
+import { AlertPopup } from '../components/common/AlertPopup';
+import { useUserStore } from '../stores/useUserStore';
 
 interface SearchViewProps {
     onBack: () => void;
     onProductClick: (product: Product) => void;
+    selectedCanteen: Canteen | null;
 }
 
 const HOT_SEARCHES = ['招牌猪肉煎饺', '粤式腊味饭', '浓汤牛肉面', '香煎鸡胸肉', '蒸饺拼盘'];
@@ -15,25 +18,74 @@ const HOT_SEARCHES = ['招牌猪肉煎饺', '粤式腊味饭', '浓汤牛肉面'
 export const SearchView: React.FC<SearchViewProps> = ({
     onBack,
     onProductClick,
+    selectedCanteen,
 }) => {
     const { addToCart, removeFromCart, getCartQuantity } = useCartStore();
+    const { user, setShowLoginModal } = useUserStore();
     const [searchQuery, setSearchQuery] = useState('');
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertTitle, setAlertTitle] = useState('');
+
+    const showAlert = (message: string, title: string = '提示') => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(true);
+    };
+
+    // 检查是否允许添加到购物车
+    const canAddToCart = () => {
+        // 检查用户是否已登录
+        if (!user) {
+            setShowLoginModal(true);
+            return false;
+        }
+
+        // 检查食堂状态
+        if (selectedCanteen) {
+            if (selectedCanteen.status === 'CLOSED') {
+                showAlert('当前食堂已关停，暂时无法下单', '提示');
+                return false;
+            }
+            if (selectedCanteen.status === 'BUSY') {
+                showAlert('当前食堂繁忙，暂时无法下单', '提示');
+                return false;
+            }
+        }
+
+        // 移除基于当前位置的服务半径检查，仅在下单时检查配送地址
+        return true;
+    };
     const [products, setProducts] = useState<Product[]>([]);
     const [history, setHistory] = useState<string[]>([]);
     const [isFocused, setIsFocused] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
 
     // Load history and products
+    // 使用ref记录当前食堂ID和StrictMode调用状态
+    const currentCanteenIdRef = useRef(selectedCanteen?.id || '');
+    const strictModeRef = useRef(0);
     useEffect(() => {
         const savedHistory = localStorage.getItem('search_history');
         if (savedHistory) setHistory(JSON.parse(savedHistory));
 
+        // React StrictMode下会执行两次，这里只执行一次
+        if (strictModeRef.current >= 1 && currentCanteenIdRef.current === selectedCanteen?.id) {
+            return;
+        }
+
+        strictModeRef.current++;
+        if (selectedCanteen?.id) {
+            currentCanteenIdRef.current = selectedCanteen.id;
+        }
+
         const fetchProducts = async () => {
-            const data = await getProducts({});
+            // 只获取当前选中食堂的产品
+            const data = await getProducts({ canteenId: selectedCanteen?.id });
             setProducts(data.data);
         };
         fetchProducts();
-    }, []);
+    }, [selectedCanteen?.id]);
 
     const saveHistory = (query: string) => {
         if (!query.trim()) return;
@@ -285,7 +337,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                                                             <span className="text-xs font-bold w-4 text-center text-gray-800">{qty}</span>
                                                             <motion.button
                                                                 whileTap={{ scale: 0.8 }}
-                                                                onClick={(e) => { e.stopPropagation(); addToCart(product) }}
+                                                                onClick={(e) => { e.stopPropagation(); if (canAddToCart() && selectedCanteen) addToCart({ ...product, canteen: selectedCanteen }); }}
                                                                 className="w-7 h-7 rounded-full bg-blue-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20"
                                                             >
                                                                 <Plus size={14} />
@@ -295,7 +347,7 @@ export const SearchView: React.FC<SearchViewProps> = ({
                                                         <motion.button
                                                             whileHover={{ scale: 1.05 }}
                                                             whileTap={{ scale: 0.9 }}
-                                                            onClick={(e) => { e.stopPropagation(); addToCart(product) }}
+                                                            onClick={(e) => { e.stopPropagation(); if (canAddToCart() && selectedCanteen) addToCart({ ...product, canteen: selectedCanteen }); }}
                                                             className="w-10 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/20 active:bg-blue-700"
                                                         >
                                                             <Plus size={16} />
@@ -311,6 +363,14 @@ export const SearchView: React.FC<SearchViewProps> = ({
                     )}
                 </AnimatePresence>
             </div>
+
+            {/* 弹窗组件 */}
+            <AlertPopup
+                visible={alertVisible}
+                onClose={() => setAlertVisible(false)}
+                title={alertTitle}
+                message={alertMessage}
+            />
         </div>
     );
 };

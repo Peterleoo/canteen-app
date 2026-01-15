@@ -1,17 +1,17 @@
 import React from 'react';
 import { X, MapPin } from 'lucide-react';
 import { Canteen } from '../../types';
-import { CANTEENS } from '../../constants';
 
 interface LocationModalProps {
     selectedCanteen: Canteen;
+    canteens: Canteen[];
     onSelect: (canteen: Canteen) => void;
     onClose: () => void;
 }
 
 import { motion } from 'framer-motion';
 
-export const LocationModal: React.FC<LocationModalProps> = ({ selectedCanteen, onSelect, onClose }) => {
+export const LocationModal: React.FC<LocationModalProps> = ({ selectedCanteen, canteens, onSelect, onClose }) => {
     return (
         <div className="fixed inset-0 z-[1000] flex flex-col justify-end overflow-hidden">
             <motion.div
@@ -34,7 +34,7 @@ export const LocationModal: React.FC<LocationModalProps> = ({ selectedCanteen, o
                 </div>
                 <div className="p-4 overflow-y-auto space-y-3 smooth-scroll">
                     <div className="text-xs text-gray-500 font-medium">当前定位附近</div>
-                    {CANTEENS.map(canteen => (
+                    {canteens.map(canteen => (
                         <div
                             key={canteen.id}
                             onClick={() => onSelect(canteen)}
@@ -44,6 +44,9 @@ export const LocationModal: React.FC<LocationModalProps> = ({ selectedCanteen, o
                                 <div className="font-bold text-gray-800 flex items-center gap-2 text-sm">
                                     {canteen.name}
                                     {selectedCanteen.id === canteen.id && <span className="text-primary-600 text-[10px] border border-primary-600 px-1 rounded">当前</span>}
+                                    {canteen.status === 'CLOSED' && <span className="text-red-500 text-[10px] border border-red-500 px-1 rounded">关停</span>}
+                                    {canteen.status === 'BUSY' && <span className="text-yellow-500 text-[10px] border border-yellow-500 px-1 rounded">繁忙</span>}
+                                    {canteen.status === 'OPEN' && <span className="text-green-500 text-[10px] border border-green-500 px-1 rounded">开启</span>}
                                 </div>
                                 <div className="text-xs text-gray-500 mt-1">{canteen.address}</div>
                             </div>

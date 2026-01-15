@@ -19,6 +19,16 @@ export const OrderStatus = {
 } as const;
 export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus];
 
+// 订单状态中文映射
+export const OrderStatusText = {
+  PENDING: '已接单',
+  PREPARING: '准备中',
+  DELIVERING: '配送中',
+  READY_FOR_PICKUP: '待取餐',
+  COMPLETED: '已完成',
+  CANCELLED: '已取消'
+} as const;
+
 // 配送方式
 export type DeliveryMethod = 'PICKUP' | 'DELIVERY';
 
@@ -82,12 +92,17 @@ export interface User {
 // 地址
 export interface Address {
   id: string;
+  userId?: string;
   contactName: string;
   phone: string;
   area: string;
   detail: string;
-  tag: string;
   isDefault: boolean;
+  tag: string;
+  latitude?: number;
+  longitude?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // 订单项
@@ -97,6 +112,7 @@ export interface OrderItem {
   productName: string;
   price: number;
   quantity: number;
+  image?: string;
   createdAt: string;
 }
 
@@ -126,31 +142,33 @@ export interface Order {
 
 // 食堂
 export interface Canteen {
-  id: string;
-  name: string;
-  address: string;
-  distance?: string;
-  status: 'OPEN' | 'CLOSED' | 'BUSY';
-  contactPhone?: string;
-  manager?: string;
-  capacity?: number;
-  currentOrders?: number;
-  isAutoAcceptOrders: boolean;
-  autoAcceptDelay?: number;
-  weekdayOpenTime: string;
-  weekdayCloseTime: string;
-  weekendOpenTime: string;
-  weekendCloseTime: string;
-  stockAlertThreshold: number;
-  isLowStockNotification: boolean;
-  notificationPhones?: string[];
-  isDeliveryActive: boolean;
-  deliveryRadius: number;
-  minDeliveryAmount: number;
-  deliveryFee: number;
-  freeDeliveryThreshold: number;
-  defaultPackagingFee: number;
-  createdAt?: string;
+    id: string;
+    name: string;
+    address: string;
+    distance?: string;
+    latitude: number;
+    longitude: number;
+    status: 'OPEN' | 'CLOSED' | 'BUSY';
+    contactPhone?: string;
+    manager?: string;
+    capacity?: number;
+    currentOrders?: number;
+    isAutoAcceptOrders: boolean;
+    autoAcceptDelay?: number;
+    weekdayOpenTime: string;
+    weekdayCloseTime: string;
+    weekendOpenTime: string;
+    weekendCloseTime: string;
+    stockAlertThreshold: number;
+    isLowStockNotification: boolean;
+    notificationPhones?: string[];
+    isDeliveryActive: boolean;
+    deliveryRadius: number;
+    minDeliveryAmount: number;
+    deliveryFee: number;
+    freeDeliveryThreshold: number;
+    defaultPackagingFee: number;
+    createdAt?: string;
   updatedAt?: string;
 }
 

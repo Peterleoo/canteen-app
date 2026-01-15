@@ -7,10 +7,16 @@
     "build": "vite build",
     "build:root": "set VITE_BASE_URL=/ && vite build",
     "build:canteen": "set VITE_BASE_URL=/canteen/ && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "node server.js",
+    "start": "npm run server"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.90.0",
+    "@amap/amap-jsapi-loader": "^1.0.1",
+    "axios": "^1.13.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "framer-motion": "^12.23.26",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
@@ -19,12 +25,14 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.90.1",
     "@tailwindcss/postcss": "^4.1.18",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.23",
     "postcss": "^8.5.6",
+    "supabase": "^2.72.7",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.5.3",
     "vite": "^5.4.1"

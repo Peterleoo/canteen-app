@@ -1,21 +1,86 @@
-import React from 'react';
-import { History, ChevronRight } from 'lucide-react';
-import { Order } from '../types';
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
+import { History, ChevronRight, Loader2 } from 'lucide-react';
+import { Order, OrderStatusText } from '../types';
 import { WeChatHeader } from '../components/layout/WeChatHeader';
-import { useOrderStore } from '../stores/useOrderStore';
+import { useUserStore } from '../stores/useUserStore';
+
+import { getOrders } from '../services/orderService';
 
 interface OrdersViewProps {
     onOrderClick: (order: Order) => void;
 }
 
 export const OrdersView: React.FC<OrdersViewProps> = ({ onOrderClick }) => {
-    const { orders } = useOrderStore();
+    const { user } = useUserStore();
+    const location = useLocation();
+    const [orders, setOrders] = useState<Order[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    // 获取订单列表
+    const fetchOrders = async () => {
+        if (!user?.id) {
+            setOrders([]);
+            setIsLoading(false);
+            return;
+        }
+
+        setIsLoading(true);
+        setError(null);
+        try {
+            const result = await getOrders({
+                userId: user.id
+            });
+            setOrders(result.data);
+        } catch (err) {
+            console.error('Failed to fetch orders:', err);
+            setError('获取订单失败，请稍后重试');
+            setOrders([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // 组件挂载或路径切换时获取订单
+    useEffect(() => {
+        // 只要路径切换到“订单”页面且用户已登录，就刷新数据
+        if (location.pathname === '/orders' && user?.id) {
+            fetchOrders();
+        }
+
+        // 每30秒自动刷新一次订单列表，确保状态更新
+        const interval = setInterval(() => {
+            if (location.pathname === '/orders' && user?.id) {
+                fetchOrders();
+            }
+        }, 30000);
+
+        return () => clearInterval(interval);
+    }, [user?.id, location.pathname]);
 
     return (
         <div className="flex flex-col h-full bg-[#f7f8fa] flex-1 min-h-0">
             <WeChatHeader title="订单列表" />
+
             <div className="flex-1 overflow-y-auto p-4 pb-20 space-y-3 smooth-scroll">
-                {orders.length === 0 ? (
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center h-[60vh] text-gray-400">
+                        <Loader2 size={48} className="mb-4 opacity-20 animate-spin" />
+                        <p className="text-sm">加载中...</p>
+                    </div>
+                ) : error ? (
+                    <div className="flex flex-col items-center justify-center h-[60vh] text-gray-400">
+                        <History size={48} className="mb-4 opacity-20" />
+                        <p className="text-sm text-red-500 mb-2">{error}</p>
+                        <button
+                            onClick={fetchOrders}
+                            className="px-4 py-1.5 bg-blue-600 text-white text-xs font-medium rounded-full"
+                        >
+                            重试
+                        </button>
+                    </div>
+                ) : orders.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[60vh] text-gray-400">
                         <History size={48} className="mb-4 opacity-20" />
                         <p className="text-sm">暂无订单</p>
@@ -33,13 +98,13 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ onOrderClick }) => {
                                     <span className="font-bold text-gray-800 text-sm truncate max-w-[150px]">{order.addressDetail}</span>
                                     <ChevronRight size={14} className="text-gray-400" />
                                 </div>
-                                <span className="text-xs text-gray-500">{order.status}</span>
+                                <span className="text-xs text-gray-500">{OrderStatusText[order.status]}</span>
                             </div>
 
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2 overflow-hidden">
                                     {order.orderItems?.slice(0, 3).map((item) => (
-                                        <div key={item.id} className="w-12 h-12 rounded bg-gray-100 flex items-center justify-center text-xs text-gray-400">{item.productName}</div>
+                                        <img key={item.id} src={item.image || ''} alt={item.productName} className="w-12 h-12 rounded bg-gray-100 object-cover" />
                                     ))}
                                     {order.orderItems?.length && order.orderItems.length > 3 && <div className="text-xs text-gray-400 bg-gray-50 h-12 px-2 flex items-center justify-center rounded">+{order.orderItems.length - 3}</div>}
                                 </div>

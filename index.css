@@ -2,14 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Brand Colors */
+  --color-primary: #0052D9;
+  --color-primary-hover: #003EB3;
+  --color-primary-light: #E1E9FF;
+  --color-success: #07C160;
+  --color-warning: #FAAD14;
+  --color-error: #F5222D;
+
+  /* Neutral Colors */
+  --bg-page: #F5F6F8;
+  --bg-card: #FFFFFF;
+  --text-main: #1D2129;
+  --text-info: #4E5969;
+  --text-muted: #86909C;
+  --border-color: #F2F3F5;
+
+  /* Design Tokens */
+  --radius-max: 24px;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 8px 20px rgba(0, 82, 217, 0.15);
+}
+
 /* 视口基础重塑：采用标准的 100% + overflow: hidden 方案，避免拦截触摸 */
 html,
 body {
   height: 100%;
-  height: -webkit-fill-available;
+  /* 解决 iOS Safari 100vh 包含工具栏的问题 */
+  min-height: -webkit-fill-available;
   width: 100%;
   overflow: hidden;
-  /* 防止橡皮筋滚动 */
   background-color: #F5F6F8;
   margin: 0;
   padding: 0;
@@ -23,12 +51,11 @@ body {
 
 #root {
   height: 100%;
-  height: -webkit-fill-available;
+  min-height: -webkit-fill-available;
   width: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* 强制所有内容在根容器内管理 */
 }
 
 /* Flex 子项高度延伸补丁 (iOS Webkit 专用) */

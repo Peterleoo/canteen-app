@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { MapPin, ChevronDown, Search, Minus, Plus } from 'lucide-react';
 import { Product, Canteen, Category } from '../types';
 import { WeChatHeader } from '../components/layout/WeChatHeader';
@@ -7,6 +7,8 @@ import { getProducts } from '../services/productService';
 import { useCartStore } from '../stores/useCartStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton } from '../components/common/Skeleton';
+import { AlertPopup } from '../components/common/AlertPopup';
+import { useUserStore } from '../stores/useUserStore';
 
 interface HomeViewProps {
     selectedCanteen: Canteen;
@@ -32,6 +34,38 @@ export const HomeView: React.FC<HomeViewProps> = ({
     onProductClick,
 }) => {
     const { addToCart, removeFromCart, getCartQuantity } = useCartStore();
+    const { user, setShowLoginModal } = useUserStore();
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const [alertTitle, setAlertTitle] = useState('');
+
+    const showAlert = (message: string, title: string = '提示') => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(true);
+    };
+
+    // 检查是否允许添加到购物车
+    const canAddToCart = () => {
+        // 检查用户是否已登录
+        if (!user) {
+            setShowLoginModal(true);
+            return false;
+        }
+
+        // 检查食堂状态
+        if (selectedCanteen.status === 'CLOSED') {
+            showAlert('当前食堂已关停，暂时无法下单', '提示');
+            return false;
+        }
+        if (selectedCanteen.status === 'BUSY') {
+            showAlert('当前食堂繁忙，暂时无法下单', '提示');
+            return false;
+        }
+
+        // 移除基于当前位置的服务半径检查，仅在下单时检查配送地址
+        return true;
+    };
     const [isLoading, setIsLoading] = React.useState(true);
     const [currentBanner, setCurrentBanner] = React.useState(0);
     const [products, setProducts] = React.useState<Product[]>([]);
@@ -39,11 +73,23 @@ export const HomeView: React.FC<HomeViewProps> = ({
     const rightScrollRef = useRef<HTMLDivElement>(null);
     const isScrollingRef = useRef(false);
 
+    // 使用ref记录当前食堂ID和StrictMode调用状态
+    const currentCanteenIdRef = React.useRef(selectedCanteen.id);
+    const strictModeRef = React.useRef(0);
+
     React.useEffect(() => {
+        // React StrictMode下会执行两次，这里只执行一次
+        if (strictModeRef.current >= 1 && currentCanteenIdRef.current === selectedCanteen.id) {
+            return;
+        }
+
+        strictModeRef.current++;
+        currentCanteenIdRef.current = selectedCanteen.id;
+
         const loadData = async () => {
             setIsLoading(true);
             try {
-                const fetchedProducts = await getProducts({});
+                const fetchedProducts = await getProducts({ canteenId: selectedCanteen.id });
                 setProducts(fetchedProducts.data);
             } catch (error) {
                 console.error("Failed to load products", error);
@@ -59,13 +105,16 @@ export const HomeView: React.FC<HomeViewProps> = ({
         return () => {
             clearInterval(bannerTimer);
         };
-    }, []);
+    }, [selectedCanteen.id]);
 
     const categories = Object.values(Category);
-    const groupedProducts = categories.map(cat => ({
-        category: cat,
-        products: products.filter(p => p.category === cat)
-    })).filter(group => group.products.length > 0);
+    const groupedProducts = categories
+        .filter(cat => cat !== '人气热销') // 排除人气热销分类，因为它已经作为独立区域展示
+        .map(cat => ({
+            category: cat,
+            products: products.filter(p => p.category === cat)
+        }))
+        .filter(group => group.products.length > 0);
 
     const scrollToCategory = (category: string) => {
         isScrollingRef.current = true;
@@ -122,18 +171,42 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
     return (
         <div className="flex flex-col h-full bg-[#F5F6F8] relative flex-1 min-h-0">
+            {/* 全局休息中横幅 */}
+            {selectedCanteen.status === 'CLOSED' && (
+                <div className="bg-red-500 text-white text-[12px] font-bold py-1.5 flex items-center justify-center gap-2 z-[60] animate-fade-in shrink-0">
+                    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                    当前食堂处于休息时间，暂无法下单
+                </div>
+            )}
+
             <WeChatHeader className="bg-white/80 backdrop-blur-md" />
 
-            <div className="bg-white/80 backdrop-blur-md px-4 pb-3 flex gap-3 items-center shadow-sm z-30 shrink-0 sticky top-0">
-                <div
-                    className="flex items-center gap-1.5 max-w-[180px] cursor-pointer active:opacity-60 transition-opacity shrink-0"
-                    onClick={onShowLocation}
-                >
-                    <div className="w-8 h-8 rounded-full bg-[#F2F6FC] flex items-center justify-center shrink-0">
-                        <MapPin size={16} className="text-[#0052D9]" />
+            <div className={`bg-white/80 backdrop-blur-md px-4 pb-3 flex gap-3 items-center shadow-sm z-30 shrink-0 sticky top-0 ${selectedCanteen.status === 'CLOSED' ? 'grayscale' : ''}`}>
+                <div className="flex flex-col shrink-0">
+                    <div
+                        className="flex items-center gap-1.5 max-w-[180px] cursor-pointer active:opacity-60 transition-opacity"
+                        onClick={onShowLocation}
+                    >
+                        <div className="w-8 h-8 rounded-full bg-[#F2F6FC] flex items-center justify-center shrink-0">
+                            <MapPin size={16} className="text-[#0052D9]" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-[14px] font-bold text-gray-900 truncate">{selectedCanteen.name}</span>
+                            <ChevronDown size={14} className="text-gray-400 shrink-0" />
+                        </div>
                     </div>
-                    <span className="text-[14px] font-bold text-gray-900 truncate">{selectedCanteen.name}</span>
-                    <ChevronDown size={14} className="text-gray-400 shrink-0" />
+                    {/* 食堂状态显示 */}
+                    <div className="flex items-center gap-1 mt-1 ml-10">
+                        {selectedCanteen.status === 'CLOSED' && (
+                            <span className="text-red-500 text-[10px] font-bold bg-red-50 px-1.5 py-0.5 rounded border border-red-200">休息中</span>
+                        )}
+                        {selectedCanteen.status === 'BUSY' && (
+                            <span className="text-yellow-600 text-[10px] font-bold bg-yellow-50 px-1.5 py-0.5 rounded border border-yellow-200">稍显繁忙</span>
+                        )}
+                        {selectedCanteen.status === 'OPEN' && (
+                            <span className="text-green-600 text-[10px] font-bold bg-green-50 px-1.5 py-0.5 rounded border border-green-200">正常营业</span>
+                        )}
+                    </div>
                 </div>
 
                 <div
@@ -145,7 +218,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                 </div>
             </div>
 
-            <div className="flex flex-1 overflow-hidden relative">
+            <div className={`flex flex-1 overflow-hidden relative ${selectedCanteen.status === 'CLOSED' ? 'grayscale opacity-80 pointer-events-none' : ''}`}>
                 {/* Left Sidebar Category */}
                 <div className="w-[88px] bg-[#F5F6F8] overflow-y-auto no-scrollbar shrink-0 pb-32">
                     <button
@@ -280,7 +353,7 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                                             </div>
                                                         </div>
                                                         <button
-                                                            onClick={(e) => { e.stopPropagation(); addToCart(product); }}
+                                                            onClick={(e) => { e.stopPropagation(); if (canAddToCart()) addToCart({ ...product, canteen: selectedCanteen }); }}
                                                             className="w-full bg-red-50 text-red-600 text-[10px] py-1.5 rounded-lg font-bold hover:bg-red-100 active:scale-95 transition-all shadow-sm"
                                                         >
                                                             马上抢
@@ -304,68 +377,70 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                 </div>
 
                                 <div className="space-y-6">
-                                    {[...products].sort((a, b) => b.sales - a.sales).slice(0, 8).map(product => {
-                                        const qty = getCartQuantity(product.id);
-                                        return (
-                                            <motion.div
-                                                initial={{ y: 20, opacity: 0 }}
-                                                whileInView={{ y: 0, opacity: 1 }}
-                                                viewport={{ once: true }}
-                                                key={product.id}
-                                                className="flex gap-3 relative group"
-                                                onClick={() => onProductClick(product)}
-                                            >
-                                                <div className="w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-gray-100 relative shadow-sm">
-                                                    <img src={product.image} className="w-full h-full object-cover" loading="lazy" />
-                                                    {product.stock < 10 && (
-                                                        <div className="absolute bottom-0 w-full bg-black/60 backdrop-blur-sm text-white text-[10px] text-center py-0.5">仅剩{product.stock}份</div>
-                                                    )}
-                                                </div>
-
-                                                <div className="flex-1 flex flex-col justify-between py-0.5 min-w-0">
-                                                    <div>
-                                                        <h3 className="font-bold text-gray-900 text-[15px] mb-1 truncate">{product.name}</h3>
-                                                        <p className="text-xs text-gray-500 line-clamp-1 mb-1.5">{product.description}</p>
-                                                        <div className="flex flex-wrap gap-1">
-                                                            {product.tags?.map(tag => (
-                                                                <span key={tag} className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-md">
-                                                                    {tag}
-                                                                </span>
-                                                            ))}
-                                                        </div>
-                                                    </div>
-
-                                                    <div className="flex justify-between items-end">
-                                                        <div className="flex flex-col">
-                                                            <div className="text-[10px] text-gray-400 mb-0.5">月售 {formatSales(product.sales)}</div>
-                                                            <div className="text-red-500 font-bold text-lg flex items-baseline font-mono lh-1">
-                                                                <span className="text-xs mr-0.5">¥</span>{product.price}
-                                                            </div>
-                                                        </div>
-
-                                                        {qty > 0 ? (
-                                                            <div className="flex items-center gap-3">
-                                                                <button onClick={(e) => { e.stopPropagation(); removeFromCart(product.id) }} className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 bg-white active:bg-gray-100 active:scale-90 transition-all">
-                                                                    <Minus size={14} />
-                                                                </button>
-                                                                <span className="text-sm font-bold w-4 text-center text-gray-900">{qty}</span>
-                                                                <button onClick={(e) => { e.stopPropagation(); addToCart(product) }} className="w-7 h-7 rounded-full bg-[#0052D9] flex items-center justify-center text-white active:scale-90 shadow-glow transition-all">
-                                                                    <Plus size={14} />
-                                                                </button>
-                                                            </div>
-                                                        ) : (
-                                                            <button
-                                                                onClick={(e) => { e.stopPropagation(); addToCart(product) }}
-                                                                className="w-7 h-7 rounded-full bg-[#0052D9] flex items-center justify-center text-white active:scale-90 shadow-glow transition-all"
-                                                            >
-                                                                <Plus size={14} />
-                                                            </button>
+                                    {products
+                                        .filter(product => product.category === '人气热销') // 只显示分类为"人气热销"的商品
+                                        .map(product => {
+                                            const qty = getCartQuantity(product.id);
+                                            return (
+                                                <motion.div
+                                                    initial={{ y: 20, opacity: 0 }}
+                                                    whileInView={{ y: 0, opacity: 1 }}
+                                                    viewport={{ once: true }}
+                                                    key={product.id}
+                                                    className="flex gap-3 relative group"
+                                                    onClick={() => onProductClick(product)}
+                                                >
+                                                    <div className="w-24 h-24 shrink-0 rounded-xl overflow-hidden bg-gray-100 relative shadow-sm">
+                                                        <img src={product.image} className="w-full h-full object-cover" loading="lazy" />
+                                                        {product.stock < 10 && (
+                                                            <div className="absolute bottom-0 w-full bg-black/60 backdrop-blur-sm text-white text-[10px] text-center py-0.5">仅剩{product.stock}份</div>
                                                         )}
                                                     </div>
-                                                </div>
-                                            </motion.div>
-                                        );
-                                    })}
+
+                                                    <div className="flex-1 flex flex-col justify-between py-0.5 min-w-0">
+                                                        <div>
+                                                            <h3 className="font-bold text-gray-900 text-[15px] mb-1 truncate">{product.name}</h3>
+                                                            <p className="text-xs text-gray-500 line-clamp-1 mb-1.5">{product.description}</p>
+                                                            <div className="flex flex-wrap gap-1">
+                                                                {product.tags?.map(tag => (
+                                                                    <span key={tag} className="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded-md">
+                                                                        {tag}
+                                                                    </span>
+                                                                ))}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="flex justify-between items-end">
+                                                            <div className="flex flex-col">
+                                                                <div className="text-[10px] text-gray-400 mb-0.5">月售 {formatSales(product.sales)}</div>
+                                                                <div className="text-red-500 font-bold text-lg flex items-baseline font-mono lh-1">
+                                                                    <span className="text-xs mr-0.5">¥</span>{product.price}
+                                                                </div>
+                                                            </div>
+
+                                                            {qty > 0 ? (
+                                                                <div className="flex items-center gap-3">
+                                                                    <button onClick={(e) => { e.stopPropagation(); removeFromCart(product.id) }} className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-gray-600 bg-white active:bg-gray-100 active:scale-90 transition-all">
+                                                                        <Minus size={14} />
+                                                                    </button>
+                                                                    <span className="text-sm font-bold w-4 text-center text-gray-900">{qty}</span>
+                                                                    <button onClick={(e) => { e.stopPropagation(); if (canAddToCart()) addToCart({ ...product, canteen: selectedCanteen }); }} className="w-7 h-7 rounded-full bg-[#0052D9] flex items-center justify-center text-white active:scale-90 shadow-glow transition-all">
+                                                                        <Plus size={14} />
+                                                                    </button>
+                                                                </div>
+                                                            ) : (
+                                                                <button
+                                                                    onClick={(e) => { e.stopPropagation(); if (canAddToCart()) addToCart({ ...product, canteen: selectedCanteen }); }}
+                                                                    className="w-7 h-7 rounded-full bg-[#0052D9] flex items-center justify-center text-white active:scale-90 shadow-glow transition-all"
+                                                                >
+                                                                    <Plus size={14} />
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </motion.div>
+                                            );
+                                        })}
                                 </div>
 
                                 {groupedProducts.map(group => (
@@ -417,13 +492,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
                                                                             <Minus size={14} />
                                                                         </button>
                                                                         <span className="text-sm font-bold w-4 text-center text-gray-900">{qty}</span>
-                                                                        <button onClick={(e) => { e.stopPropagation(); addToCart(product) }} className="w-7 h-7 rounded-full bg-[#0052D9] flex items-center justify-center text-white active:scale-90 shadow-glow transition-all">
+                                                                        <button onClick={(e) => { e.stopPropagation(); if (canAddToCart()) addToCart({ ...product, canteen: selectedCanteen }); }} className="w-7 h-7 rounded-full bg-[#0052D9] flex items-center justify-center text-white active:scale-90 shadow-glow transition-all">
                                                                             <Plus size={14} />
                                                                         </button>
                                                                     </div>
                                                                 ) : (
                                                                     <button
-                                                                        onClick={(e) => { e.stopPropagation(); addToCart(product) }}
+                                                                        onClick={(e) => { e.stopPropagation(); if (canAddToCart()) addToCart({ ...product, canteen: selectedCanteen }); }}
                                                                         className="w-7 h-7 rounded-full bg-[#0052D9] flex items-center justify-center text-white active:scale-90 shadow-glow transition-all"
                                                                     >
                                                                         <Plus size={14} />
@@ -444,7 +519,15 @@ export const HomeView: React.FC<HomeViewProps> = ({
                         )}
                     </div>
                 </div>
-            </div >
-        </div >
+            </div>
+
+            {/* 弹窗组件 */}
+            <AlertPopup
+                visible={alertVisible}
+                onClose={() => setAlertVisible(false)}
+                title={alertTitle}
+                message={alertMessage}
+            />
+        </div>
     );
 };

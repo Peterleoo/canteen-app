@@ -4,6 +4,8 @@ import { Product } from '../types';
 import { formatSales } from '../utils/format';
 import { useCartStore } from '../stores/useCartStore';
 import { motion } from 'framer-motion';
+import { AlertPopup } from '../components/common/AlertPopup';
+import { useUserStore } from '../stores/useUserStore';
 
 interface ProductDetailsViewProps {
     product: Product;
@@ -17,10 +19,49 @@ export const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({
     onOpenCart,
 }) => {
     const { addToCart, updateQuantity, getCartQuantity, getCartCount } = useCartStore();
+    const { user, setShowLoginModal } = useUserStore();
     const qty = getCartQuantity(product.id);
     const cartCount = getCartCount();
 
     const [headerOpacity, setHeaderOpacity] = React.useState(0);
+    const [alertVisible, setAlertVisible] = React.useState(false);
+    const [alertMessage, setAlertMessage] = React.useState('');
+    const [alertTitle, setAlertTitle] = React.useState('');
+    
+    const showAlert = (message: string, title: string = '提示') => {
+      setAlertTitle(title);
+      setAlertMessage(message);
+      setAlertVisible(true);
+    };
+    
+    // 检查是否允许添加到购物车
+    const canAddToCart = () => {
+      // 检查用户是否已登录
+      if (!user) {
+        setShowLoginModal(true);
+        return false;
+      }
+      
+      // 从product中获取canteen信息
+      const canteen = product.canteen;
+      if (!canteen) {
+        showAlert('获取食堂信息失败，无法添加到购物车', '提示');
+        return false;
+      }
+      
+      // 检查食堂状态
+      if (canteen.status === 'CLOSED') {
+        showAlert('当前食堂已关停，暂时无法下单', '提示');
+        return false;
+      }
+      if (canteen.status === 'BUSY') {
+        showAlert('当前食堂繁忙，暂时无法下单', '提示');
+        return false;
+      }
+      
+      // 移除基于当前位置的服务半径检查，仅在下单时检查配送地址
+      return true;
+    };
 
     const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
         const scrollTop = e.currentTarget.scrollTop;
@@ -110,7 +151,7 @@ export const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({
                                 ) : (
                                     <motion.button
                                         whileTap={{ scale: 0.95 }}
-                                        onClick={(e) => { e.stopPropagation(); addToCart(product) }}
+                                        onClick={(e) => { e.stopPropagation(); if (canAddToCart()) addToCart(product); }}
                                         className="bg-[#0052D9] text-white px-5 py-2 rounded-full font-bold shadow-[0_4px_12px_rgba(0,82,217,0.25)] active:scale-95 transition-transform text-sm flex items-center gap-1"
                                     >
                                         <Plus size={16} /> 加入购物车
@@ -218,6 +259,14 @@ export const ProductDetailsView: React.FC<ProductDetailsViewProps> = ({
                     </div>
                 </div>
             </div>
+            
+            {/* 弹窗组件 */}
+            <AlertPopup
+                visible={alertVisible}
+                onClose={() => setAlertVisible(false)}
+                title={alertTitle}
+                message={alertMessage}
+            />
         </motion.div>
     );
 };

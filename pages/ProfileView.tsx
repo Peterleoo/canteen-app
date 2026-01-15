@@ -1,5 +1,6 @@
 import React from 'react';
 import { MapPin, ShoppingBag, Headphones, Store, ChevronRight, User as UserIcon } from 'lucide-react';
+import { motion } from 'framer-motion';
 // removed unused import
 import { WeChatHeader } from '../components/layout/WeChatHeader';
 import { Button } from '../components/Button';
@@ -33,21 +34,62 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
         <div className="flex flex-col h-full bg-[#f7f8fa] flex-1 min-h-0">
             <WeChatHeader title="个人中心" />
             <div className="flex-1 overflow-y-auto pb-20 smooth-scroll">
-                <div className="bg-white p-6 mb-2 flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm">
-                        {user ? <img src={user.avatar} className="w-full h-full object-cover" /> : <UserIcon className="w-full h-full p-4 text-gray-400" />}
-                    </div>
-                    <div className="flex-1">
-                        {user ? (
-                            <>
-                                <h2 className="font-bold text-xl text-gray-900">{user.name}</h2>
-                                <p className="text-sm text-gray-500 mt-1">{user.phone}</p>
-                            </>
-                        ) : (
-                            <button onClick={() => setShowLoginModal(true)} className="font-bold text-lg text-blue-600">点击登录</button>
-                        )}
+                {/* Premium Background Header */}
+                <div className="relative h-48 bg-gradient-to-br from-[#0052D9] to-[#2E7DFF] overflow-hidden">
+                    <div className="absolute top-[-20%] right-[-10%] w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+                    <div className="absolute bottom-[-10%] left-[-5%] w-32 h-32 bg-blue-400/20 rounded-full blur-2xl" />
+
+                    <div className="absolute bottom-0 left-0 right-0 p-6 flex items-center gap-5">
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="w-20 h-20 rounded-2xl bg-white p-1 shadow-2xl relative z-10"
+                        >
+                            <div className="w-full h-full rounded-xl bg-gray-100 overflow-hidden">
+                                {user ? (
+                                    <img src={user.avatar} className="w-full h-full object-cover" />
+                                ) : (
+                                    <UserIcon className="w-full h-full p-5 text-gray-300" />
+                                )}
+                            </div>
+                            {user && (
+                                <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full border-2 border-white flex items-center justify-center">
+                                    <span className="text-[10px] font-bold text-yellow-900">V</span>
+                                </div>
+                            )}
+                        </motion.div>
+
+                        <div className="flex-1 py-1">
+                            {user ? (
+                                <>
+                                    <motion.h2
+                                        initial={{ x: -10, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        className="font-bold text-2xl text-white tracking-tight"
+                                    >
+                                        {user.name}
+                                    </motion.h2>
+                                    <motion.div
+                                        initial={{ x: -10, opacity: 0 }}
+                                        animate={{ x: 0, opacity: 1 }}
+                                        transition={{ delay: 0.1 }}
+                                        className="inline-flex items-center px-2 py-0.5 mt-2 bg-white/20 backdrop-blur-md rounded-full border border-white/20"
+                                    >
+                                        <span className="text-[11px] text-white/90 font-medium">{user.phone}</span>
+                                    </motion.div>
+                                </>
+                            ) : (
+                                <button
+                                    onClick={() => setShowLoginModal(true)}
+                                    className="px-6 py-2 bg-white text-blue-600 rounded-full font-bold text-sm shadow-lg active:scale-95 transition-all"
+                                >
+                                    立即登录
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
+
 
                 <div className="bg-white mt-4">
                     {[

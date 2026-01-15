@@ -26,7 +26,7 @@ export const PickupEditView: React.FC<PickupEditViewProps> = ({
     };
 
     return (
-        <div className="absolute inset-0 bg-[#f3f4f6] z-[120] flex flex-col animate-slide-in">
+        <div className="flex-1 bg-[#f3f4f6] flex flex-col">
             <WeChatHeader title="自提信息" onBack={onBack} />
             <div className="p-4 space-y-4">
                 <div className="bg-white rounded-xl overflow-hidden shadow-sm">
