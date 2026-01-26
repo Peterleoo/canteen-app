@@ -80,8 +80,8 @@ export const SearchView: React.FC<SearchViewProps> = ({
         }
 
         const fetchProducts = async () => {
-            // 只获取当前选中食堂的产品
-            const data = await getProducts({ canteenId: selectedCanteen?.id });
+            // 只获取当前选中食堂的产品 (仅上架状态)
+            const data = await getProducts({ canteenId: selectedCanteen?.id, status: 'ACTIVE' });
             setProducts(data.data);
         };
         fetchProducts();

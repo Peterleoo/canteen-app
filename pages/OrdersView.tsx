@@ -49,14 +49,6 @@ export const OrdersView: React.FC<OrdersViewProps> = ({ onOrderClick }) => {
             fetchOrders();
         }
 
-        // 每30秒自动刷新一次订单列表，确保状态更新
-        const interval = setInterval(() => {
-            if (location.pathname === '/orders' && user?.id) {
-                fetchOrders();
-            }
-        }, 30000);
-
-        return () => clearInterval(interval);
     }, [user?.id, location.pathname]);
 
     return (

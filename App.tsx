@@ -35,19 +35,9 @@ import { AddressListView } from './pages/AddressListView';
 import { AddressEditView } from './pages/AddressEditView';
 import { PickupEditView } from './pages/PickupEditView';
 import { AddressMapView } from './pages/AddressMapView';
+import { CouponHubView } from './pages/CouponHubView';
+import { UserCouponsView } from './pages/UserCouponsView';
 
-// 基础页面切换（支持淡入淡出，用于主 Tab 切换）
-const PageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    transition={{ duration: 0.2 }}
-    className="h-full w-full flex-1 min-h-0 flex flex-col"
-  >
-    {children}
-  </motion.div>
-);
 
 // 子页面覆盖滑入（用于地址编辑、结算等，模拟商品详情页的覆盖感）
 const SubPageTransition: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -233,7 +223,7 @@ export const App: React.FC = () => {
 
   // --- Actions --- 
 
-  const handlePlaceOrder = async () => {
+  const handlePlaceOrder = async (userCouponId?: string) => {
     if (!cartCanteen) {
       console.error('No canteen available for order');
       return;
@@ -289,15 +279,49 @@ export const App: React.FC = () => {
       return;
     }
 
-    // --- 验证通过，继续创建订单 --- 
     const defaultAddress = addresses.find((a: any) => a.isDefault) || addresses[0];
     const deliveryLocation = defaultAddress ? `${defaultAddress.area} ${defaultAddress.detail}` : '请选择地址';
-    const deliveryFee = deliveryMethod === 'DELIVERY' ? orderCanteen.deliveryFee : 0;
     const cartItemTotal = getCartTotal();
+
+    // 计算配送费 (满额免运费)
+    let deliveryFee = deliveryMethod === 'DELIVERY' ? orderCanteen.deliveryFee : 0;
+    if (deliveryMethod === 'DELIVERY' && orderCanteen.freeDeliveryThreshold > 0 && cartItemTotal >= orderCanteen.freeDeliveryThreshold) {
+      deliveryFee = 0;
+    }
+
+    // --- 优惠券逻辑 ---
+    let discountAmount = 0;
+    let finalCouponId = null;
+
+    if (userCouponId) {
+      try {
+        // 从用户持有的券中寻找对应的券实例
+        const { marketingService } = await import('./services/marketingService');
+        const userCoupons = await marketingService.getUserCoupons(user?.id || '', 'UNUSED');
+        const selectedUC = userCoupons.find(uc => uc.id === userCouponId);
+
+        if (selectedUC && selectedUC.coupon) {
+          const cp = selectedUC.coupon;
+          finalCouponId = cp.id; // 关联到优惠券定义 ID
+
+          if (cartItemTotal >= (cp.min_spend || 0)) {
+            if (cp.type === 'FIXED') {
+              discountAmount = cp.value;
+            } else if (cp.type === 'PERCENT') {
+              // 增强容错：80或8或0.8 均识别为 8折(0.8)
+              const rate = cp.value >= 1 ? (cp.value > 10 ? cp.value / 100 : cp.value / 10) : cp.value;
+              discountAmount = Number((cartItemTotal * (1 - rate)).toFixed(2));
+            }
+          }
+        }
+      } catch (err) {
+        console.error('计算优惠券折扣失败:', err);
+      }
+    }
 
     // 计算包装费
     const packagingFee = cart.length > 0 ? orderCanteen.defaultPackagingFee : 0;
-    const totalAmount = cartItemTotal + deliveryFee + packagingFee;
+    const totalAmount = Math.max(0, cartItemTotal + deliveryFee + packagingFee - discountAmount);
 
     // 构建订单数据
     const orderData = {
@@ -305,11 +329,12 @@ export const App: React.FC = () => {
       canteenId: orderCanteen.id,
       subtotal: cartItemTotal,
       total: totalAmount,
-      status: deliveryMethod === 'DELIVERY' ? OrderStatus.PENDING : OrderStatus.PENDING,
+      status: OrderStatus.PENDING,
       deliveryMethod,
       deliveryFee,
-      packagingFee: packagingFee, // 使用实际计算的包装费
-      discountAmount: 0, // 添加默认折扣金额
+      packagingFee: packagingFee,
+      discountAmount: discountAmount,
+      couponId: finalCouponId,
       addressId: defaultAddress?.id || null,
       addressDetail: deliveryMethod === 'DELIVERY' ? deliveryLocation : orderCanteen.name,
       items: cart.map(item => ({
@@ -326,6 +351,18 @@ export const App: React.FC = () => {
       const result = await createOrder(orderData);
 
       if (result.code === 200 && result.data) {
+        // 4. 如果使用了优惠券，下单成功后执行核销
+        if (userCouponId) {
+          try {
+            const { marketingService } = await import('./services/marketingService');
+            // 后端 integer 订单 ID，前端 String(id)，需转回 number 传给 RPC
+            await marketingService.consumeCoupon(userCouponId, Number(result.data.id));
+          } catch (consumeErr) {
+            console.error('核销优惠券失败:', consumeErr);
+            // 核销失败不阻断流程，但实际业务中可能需要记录日志
+          }
+        }
+
         // 将订单添加到本地状态
         addOrder(result.data);
         // 清空购物车
@@ -389,6 +426,7 @@ export const App: React.FC = () => {
           <ProfileView
             onNavigate={(path: string) => {
               if (path === 'ADDRESS_LIST') navigate('/address/list');
+              if (path === 'MY_COUPONS') navigate('/profile/coupons');
               if (path === 'PICKUP_EDIT') navigate('/pickup-contact');
             }}
           />
@@ -496,6 +534,29 @@ export const App: React.FC = () => {
                 ) : (
                   <Navigate to="/" />
                 )}
+              </SubPageTransition>
+            </RequireAuth>
+          } />
+
+          <Route path="/coupons" element={
+            <RequireAuth>
+              <SubPageTransition>
+                {selectedCanteen ? (
+                  <CouponHubView
+                    canteen={selectedCanteen}
+                    onBack={() => navigate(-1)}
+                  />
+                ) : (
+                  <Navigate to="/" />
+                )}
+              </SubPageTransition>
+            </RequireAuth>
+          } />
+
+          <Route path="/profile/coupons" element={
+            <RequireAuth>
+              <SubPageTransition>
+                <UserCouponsView onBack={() => navigate(-1)} />
               </SubPageTransition>
             </RequireAuth>
           } />

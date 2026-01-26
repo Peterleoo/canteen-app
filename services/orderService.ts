@@ -487,8 +487,7 @@ export const createOrder = async (orderData: any): Promise<ApiResponse<Order>> =
         // 调试：打印传入的订单数据
         console.log('Received order data:', orderData);
 
-        // 根据数据库表结构，canteen_id是integer类型，不是UUID
-        // 检查UUID格式的辅助函数，只用于user_id, address_id等真正的UUID字段
+        // 检查UUID格式的辅助函数
         const isValidUUID = (str: string | null | undefined): boolean => {
             if (!str) return false;
             const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -502,14 +501,14 @@ export const createOrder = async (orderData: any): Promise<ApiResponse<Order>> =
             total: typeof orderData.total === 'number' ? orderData.total : 0,
             subtotal: typeof orderData.subtotal === 'number' ? orderData.subtotal : 0,
             delivery_fee: typeof orderData.deliveryFee === 'number' ? orderData.deliveryFee : 0,
-            packaging_fee: 0, // 包装费有默认值0
+            packaging_fee: typeof orderData.packagingFee === 'number' ? orderData.packagingFee : 0,
             discount_amount: typeof orderData.discountAmount === 'number' ? orderData.discountAmount : 0,
+            coupon_id: isValidUUID(orderData.couponId) ? orderData.couponId : null, // 优惠券关联定义 ID
             status: orderData.status,
             delivery_method: orderData.deliveryMethod,
             address_detail: orderData.addressDetail,
             is_delivery: orderData.deliveryMethod === 'DELIVERY', // 根据配送方式设置is_delivery字段
             address_id: isValidUUID(orderData.addressId) ? orderData.addressId : null, // address_id是UUID类型
-            // 可以根据需要添加contact_name和contact_phone字段
             ...(orderData.contactName ? { contact_name: orderData.contactName } : {}),
             ...(orderData.contactPhone ? { contact_phone: orderData.contactPhone } : {})
         };

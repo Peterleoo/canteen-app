@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, ShoppingBag, Headphones, Store, ChevronRight, User as UserIcon } from 'lucide-react';
+import { MapPin, ShoppingBag, Headphones, Store, ChevronRight, User as UserIcon, Ticket } from 'lucide-react';
 import { motion } from 'framer-motion';
 // removed unused import
 import { WeChatHeader } from '../components/layout/WeChatHeader';
@@ -94,6 +94,7 @@ export const ProfileView: React.FC<ProfileViewProps> = ({
                 <div className="bg-white mt-4">
                     {[
                         { icon: MapPin, label: '收货地址', action: () => onNavigate('ADDRESS_LIST') },
+                        { icon: Ticket, label: '我的优惠券', action: () => onNavigate('MY_COUPONS') },
                         { icon: ShoppingBag, label: '自提信息', action: () => onNavigate('PICKUP_EDIT') },
                         { icon: Headphones, label: '联系客服', action: () => { } },
                         { icon: Store, label: '关于我们', action: () => { } }

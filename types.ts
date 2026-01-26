@@ -21,8 +21,8 @@ export type OrderStatus = typeof OrderStatus[keyof typeof OrderStatus];
 
 // 订单状态中文映射
 export const OrderStatusText = {
-  PENDING: '已接单',
-  PREPARING: '准备中',
+  PENDING: '待接单',
+  PREPARING: '备餐中',
   DELIVERING: '配送中',
   READY_FOR_PICKUP: '待取餐',
   COMPLETED: '已完成',
@@ -185,4 +185,48 @@ export interface PaginationResponse<T> {
   total: number;
   page: number;
   pageSize: number;
+}
+
+// 优惠券定义
+export interface Coupon {
+  id: string;
+  canteen_id: string;
+  name: string;
+  description?: string;
+  type: 'FIXED' | 'PERCENT';
+  value: number;
+  min_spend: number;
+  start_at: string;
+  end_at: string;
+  total_stock: number;
+  used_count: number;
+  received_count: number;
+  status: 'ACTIVE' | 'INACTIVE';
+  created_at: string;
+}
+
+// 用户持有的优惠券
+export interface UserCoupon {
+  id: string;
+  user_id: string;
+  coupon_id: string;
+  coupon?: Coupon;
+  status: 'UNUSED' | 'USED' | 'EXPIRED';
+  received_at: string;
+  used_at?: string;
+  expires_at: string;
+}
+
+// 营销海报
+export interface MarketingBanner {
+  id: string;
+  canteen_id?: string | null;
+  image_url: string;
+  title?: string;
+  subtitle?: string;
+  action_type: 'PRODUCT' | 'CATEGORY' | 'URL' | 'NONE';
+  action_value?: string;
+  status: 'ACTIVE' | 'INACTIVE';
+  sort_order: number;
+  created_at: string;
 }

@@ -68,7 +68,7 @@ export const FloatingCartBar: React.FC<FloatingCartBarProps> = ({
                             <span className="text-[10px] font-bold text-gray-800">
                                 {isFreeDelivery ? '🎉 已享免配送费' : `还差 ¥${remainingForFree.toFixed(1)} 免配送费`}
                             </span>
-                            {!isFreeDelivery && <span className="text-[9px] text-blue-500 font-bold">去凑单 &gt;</span>}
+                            {/* {!isFreeDelivery && <span className="text-[9px] text-blue-500 font-bold">去凑单 &gt;</span>} */}
                         </div>
                         <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
                             <motion.div
